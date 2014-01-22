@@ -16,7 +16,7 @@
 Module name: pmap
 Author: Sergio Oller <soller@el.ub.edu>
 Date: 2014-01-22
-Version: 1.0
+Version: 1.1
 Tested on: python-2.7.3 and python-3.2.3
 Description: Implement map and starmap functions. Both implementations
  will parallelize if possible using multiprocess.Pool.
