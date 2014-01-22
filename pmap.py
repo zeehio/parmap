@@ -121,9 +121,7 @@ def map(function, iterable, *args, **kwargs):
         pool.close()
         pool.join()
     else:
-        output = []
-        for item in iterable:
-            output.append(function(*([item] + list(args))))
+        output = [function(*([item] + list(args))) for item in iterable]
     return output
 
 def starmap(function, iterables, *args, **kwargs):
@@ -160,9 +158,7 @@ def starmap(function, iterables, *args, **kwargs):
         pool.close()
         pool.join()
     else:
-        output = []
-        for item in iterables:
-            output.append(function(*(list(item) + list(args))))
+        output = [function(*(list(item) + list(args))) for item in iterables]
     return output
 
 
