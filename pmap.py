@@ -93,7 +93,7 @@ def map(function, iterable, *args, **kwargs):
     although it can be switched off by using parallel=False on the map
     call.
     """
-    parallel = kwargs.get("parallel", None)
+    parallel = kwargs.get("parallel", HAVE_PARALLEL)
     chunksize = kwargs.get("chunksize", None)
     pool = kwargs.get("pool", None)
     # Check if parallel is inconsistent with HAVE_PARALLEL:
@@ -101,9 +101,6 @@ def map(function, iterable, *args, **kwargs):
         print("W: Parallelization is disabled because",
               "multiprocessing is missing")
         parallel = False
-    # Set default value for parallel:
-    if parallel is None:
-        parallel = HAVE_PARALLEL
     # Initialize pool if parallel:
     if parallel and pool is None:
         try:
@@ -130,7 +127,7 @@ def starmap(function, iterables, *args, **kwargs):
             (x1,x2,x3...) in iterable]
         Only parallellization is enabled if possible.   
     """
-    parallel = kwargs.get("parallel", None)
+    parallel = kwargs.get("parallel", HAVE_PARALLEL)
     chunksize = kwargs.get("chunksize", None)
     pool = kwargs.get("pool", None)
     # Check if parallel is inconsistent with HAVE_PARALLEL:
@@ -138,9 +135,6 @@ def starmap(function, iterables, *args, **kwargs):
         print("W: Parallelization is disabled because",
               "multiprocessing is missing")
         parallel = False
-    # Set default value for parallel:
-    if parallel is None:
-        parallel = HAVE_PARALLEL
     # Initialize pool if parallel:
     if parallel and pool is None:
         try:
