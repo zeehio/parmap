@@ -6,6 +6,7 @@ This small python module implements two functions: `map` and `starmap`.
 ## What does pmap offer?
 
  - Provide an easy to use syntax for both `map` and `starmap`.
+ - Parallelize transparently whenever possible.
  - Handle multiple (positional -for now-) arguments as needed.
 
 ## Usage:
