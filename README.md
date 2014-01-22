@@ -70,3 +70,10 @@ Pull requests and suggestions are welcome.
  - [ ] Make a real module out of this (on pypi, pip install...)?
  - [ ] Improve exception handling
  - [ ] Sphinx documentation?
+
+
+## Acknowledgments:
+
+The original idea for this implementation was given by J.F. Sebastian
+at  http://stackoverflow.com/a/5443941/446149
+

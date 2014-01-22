@@ -47,6 +47,10 @@ Usage:
     listz = pmap.starmap(myfunction, zip(listx,listy), param1, param2)
 
 """
+# The original idea for this implementation was given by J.F. Sebastian
+# at  http://stackoverflow.com/a/5443941/446149
+
+
 from __future__ import print_function
 from __future__ import unicode_literals
 from __future__ import division
