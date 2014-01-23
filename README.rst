@@ -1,11 +1,11 @@
 parmap
-====
+======
 
 This small python module implements two functions: ``map`` and
 ``starmap``.
 
 What does parmap offer?
----------------------
+-----------------------
 
 -  Provide an easy to use syntax for both ``map`` and ``starmap``.
 -  Parallelize transparently whenever possible.
@@ -17,31 +17,31 @@ Usage:
 Here are some examples with some unparallelized code parallelized with
 parmap:
 
-.. code:: python
+::
 
+  import parmap
+  # You want to do:
+  y = [myfunction(x, argument1, argument2) for x in mylist]
+  # In parallel:
+  y = parmap.map(myfunction, mylist, argument1, argument2)
 
-        import parmap
-        # You want to do:
-        y = [myfunction(x, argument1, argument2) for x in mylist]
-        # In parallel:
-        y = parmap.map(myfunction, mylist, argument1, argument2)
+  # You want to do:
+  z = [myfunction(x, y, argument1, argument2) for (x,y) in mylist]
+  # In parallel:
+  z = parmap.starmap(myfunction, mylist, argument1, argument2)
 
-        # You want to do:
-        z = [myfunction(x, y, argument1, argument2) for (x,y) in mylist]
-        # In parallel:
-        z = parmap.starmap(myfunction, mylist, argument1, argument2)
+  # Yoy want to do:
+  listx = [1, 2, 3, 4, 5, 6]
+  listy = [2, 3, 4, 5, 6, 7]
+  param = 3.14
+  param2 = 42
+  listz = []
+  for x in listx:
+      for y in listy:
+          listz.append(myfunction(x, y, param1, param2))
+  # In parallel:
+  listz = parmap.starmap(myfunction, zip(listx, listy), param1, param2)
 
-        # Yoy want to do:
-        listx = [1, 2, 3, 4, 5, 6]
-        listy = [2, 3, 4, 5, 6, 7]
-        param = 3.14
-        param2 = 42
-        listz = []
-        for x in listx:
-            for y in listy:
-                listz.append(myfunction(x, y, param1, param2))
-        # In parallel:
-        listz = parmap.starmap(myfunction, zip(listx, listy), param1, param2)
 
 map (and starmap on python 3.3) already exist. Why reinvent the wheel?
 ----------------------------------------------------------------------
@@ -63,7 +63,7 @@ functions have some usability limitations:
 ``parmap`` aims to overcome this limitations in the simplest possible way.
 
 Additional features in parmap:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 -  Create a pool for parallel computation automatically if possible.
 -  ``parmap.map(..., ..., parallel=False)`` # disables parallelization
