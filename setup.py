@@ -2,10 +2,14 @@
 
 from distutils.core import setup
 
+with open('README.rst') as file:
+    long_description = file.read()
+
 setup(name='pmap',
       version='1.2dev',
       description=('map and starmap implementations passing additional',
                    'arguments and parallelizing if possible'),
+      long_description=long_description,
       author='Sergio Oller',
       license='APACHE-2.0',
       author_email='sergioller@gmail.com',
