@@ -5,7 +5,7 @@ from distutils.core import setup
 with open('README.rst') as file:
     long_description = file.read()
 
-setup(name='pmap',
+setup(name='parmap',
       version='1.2dev',
       description=('map and starmap implementations passing additional',
                    'arguments and parallelizing if possible'),
@@ -13,8 +13,8 @@ setup(name='pmap',
       author='Sergio Oller',
       license='APACHE-2.0',
       author_email='sergioller@gmail.com',
-      url='https://github.com/zeehio/pmap',
-      py_modules=['pmap'],
+      url='https://github.com/zeehio/parmap',
+      py_modules=['parmap'],
       classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',

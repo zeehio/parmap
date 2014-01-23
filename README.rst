@@ -1,10 +1,10 @@
-pmap
+parmap
 ====
 
 This small python module implements two functions: ``map`` and
 ``starmap``.
 
-What does pmap offer?
+What does parmap offer?
 ---------------------
 
 -  Provide an easy to use syntax for both ``map`` and ``starmap``.
@@ -15,21 +15,21 @@ Usage:
 ------
 
 Here are some examples with some unparallelized code parallelized with
-pmap:
+parmap:
 
 .. code:: python
 
 
-        import pmap
+        import parmap
         # You want to do:
         y = [myfunction(x, argument1, argument2) for x in mylist]
         # In parallel:
-        y = pmap.map(myfunction, mylist, argument1, argument2)
+        y = parmap.map(myfunction, mylist, argument1, argument2)
 
         # You want to do:
         z = [myfunction(x, y, argument1, argument2) for (x,y) in mylist]
         # In parallel:
-        z = pmap.starmap(myfunction, mylist, argument1, argument2)
+        z = parmap.starmap(myfunction, mylist, argument1, argument2)
 
         # Yoy want to do:
         listx = [1, 2, 3, 4, 5, 6]
@@ -41,7 +41,7 @@ pmap:
             for y in listy:
                 listz.append(myfunction(x, y, param1, param2))
         # In parallel:
-        listz = pmap.starmap(myfunction, zip(listx, listy), param1, param2)
+        listz = parmap.starmap(myfunction, zip(listx, listy), param1, param2)
 
 map (and starmap on python 3.3) already exist. Why reinvent the wheel?
 ----------------------------------------------------------------------
@@ -60,16 +60,16 @@ functions have some usability limitations:
    will need to convert it to an iterator using
    ``itertools.repeat(your_parameter)`` [#itertools-repeat]_
 
-``pmap`` aims to overcome this limitations in the simplest possible way.
+``parmap`` aims to overcome this limitations in the simplest possible way.
 
-Additional features in pmap:
+Additional features in parmap:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 -  Create a pool for parallel computation automatically if possible.
--  ``pmap.map(..., ..., parallel=False)`` # disables parallelization
--  ``pmap.map(..., ..., chunksize=3)`` # size of chunks (see
+-  ``parmap.map(..., ..., parallel=False)`` # disables parallelization
+-  ``parmap.map(..., ..., chunksize=3)`` # size of chunks (see
    multiprocessing.Pool().map)
--  ``pmap.map(..., ..., pool=multiprocessing.Pool())`` # use an existing
+-  ``parmap.map(..., ..., pool=multiprocessing.Pool())`` # use an existing
    pool
 
 To do:

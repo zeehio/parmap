@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from pmap.pmap import map, starmap
+from parmap.parmap import map, starmap
 
 __all__ = ['map', 'starmap']
 

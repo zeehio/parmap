@@ -23,16 +23,16 @@ the pool and close it automatically by default if possible.
 Use these module in CPU intensive map functions.
 
 Usage:
-    import pmap
+    import parmap
     # You want to do:
     y = [myfunction(x, argument1, argument2) for x in mylist]
     # In parallel:
-    y = pmap.map(myfunction, mylist, argument1, argument2)
+    y = parmap.map(myfunction, mylist, argument1, argument2)
 
     # You want to do:
     z = [myfunction(x, y, argument1, argument2) for (x,y) in mylist]
     # In parallel:
-    z = pmap.starmap(myfunction, mylist, argument1, argument2)
+    z = parmap.starmap(myfunction, mylist, argument1, argument2)
 
     # Yoy want to do:
     listx = [1, 2, 3, 4, 5, 6]
@@ -44,7 +44,7 @@ Usage:
         for y in listy:
             listz.append(myfunction(x, y, param1, param2))
     # In parallel:
-    listz = pmap.starmap(myfunction, zip(listx,listy), param1, param2)
+    listz = parmap.starmap(myfunction, zip(listx,listy), param1, param2)
 
 """
 # The original idea for this implementation was given by J.F. Sebastian
