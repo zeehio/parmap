@@ -76,11 +76,10 @@ To do:
 
 Pull requests and suggestions are welcome.
 
--  [ ] See if anyone is interested on this
--  [ ] Pass keyword arguments to functions
--  [ ] Make a real module out of this (on pypi, pip install...)?
--  [ ] Improve exception handling
--  [ ] Sphinx documentation?
+-  See if anyone is interested on this
+-  Pass keyword arguments to functions?
+-  Improve exception handling
+-  Sphinx documentation?
 
 Acknowledgments:
 ----------------
