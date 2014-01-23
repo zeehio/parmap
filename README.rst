@@ -38,15 +38,14 @@ parmap:
   # In parallel:
   z = parmap.starmap(myfunction, mylist, argument1, argument2)
 
-  # Yoy want to do:
+  # You want to do:
   listx = [1, 2, 3, 4, 5, 6]
   listy = [2, 3, 4, 5, 6, 7]
   param = 3.14
   param2 = 42
   listz = []
-  for x in listx:
-      for y in listy:
-          listz.append(myfunction(x, y, param1, param2))
+  for (x, y) in zip(listx, listy):
+      listz.append(myfunction(x, y, param1, param2))
   # In parallel:
   listz = parmap.starmap(myfunction, zip(listx, listy), param1, param2)
 
