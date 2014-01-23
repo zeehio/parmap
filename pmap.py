@@ -13,15 +13,15 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 """
-Module name: pmap
-Author: Sergio Oller <soller@el.ub.edu>
-Date: 2014-01-22
-Version: 1.1
-Tested on: python-2.7.3 and python-3.2.3
-Description: Implement map and starmap functions. Both implementations
- will parallelize if possible using multiprocess.Pool.
- Additionally bot functions allow additional parameters to be passed 
- to the called function. See Usage.
+This module implements map and starmap functions (see python standard
+library to learn about them).
+
+The implementations provided in this module allow providing additional
+arguments to the mapped functions. Additionally they will initialize
+the pool and close it automatically by default if possible.
+
+Use these module in CPU intensive map functions.
+
 Usage:
     import pmap
     # You want to do:
@@ -62,7 +62,6 @@ except ImportError:  # Python 3 built-in zip already returns iterable
 
 from itertools import repeat
 
-
 try:
     import multiprocessing
     HAVE_PARALLEL = True
@@ -90,16 +89,20 @@ def _func_star_many(func_items_args):
 
 
 def map(function, iterable, *args, **kwargs):
-    """ 
+    """
     Equivalent to:
     return [function(x, args[0], args[1],...) for x in iterable]
-    Parallellization is enabled if it is available via multiprocessing,
-    although it can be switched off by using parallel=False on the map
-    call.
+
+    Keyword arguments:
+       - parallel=True/False: Force parallelization on/off
+       - chunksize=int: see multiprocessing.Pool().map
+       - pool=multiprocessing.Pool() Pass an existing pool.
+       - processes=int: see multiprocessing.Pool() processes argument
     """
     parallel = kwargs.get("parallel", HAVE_PARALLEL)
     chunksize = kwargs.get("chunksize", None)
     pool = kwargs.get("pool", None)
+    processes = kwargs.get("processes", None)
     # Check if parallel is inconsistent with HAVE_PARALLEL:
     if HAVE_PARALLEL == False and parallel == True:
         print("W: Parallelization is disabled because",
@@ -108,7 +111,7 @@ def map(function, iterable, *args, **kwargs):
     # Initialize pool if parallel:
     if parallel and pool is None:
         try:
-            pool = multiprocessing.Pool()
+            pool = multiprocessing.Pool(processes=processes)
         except AssertionError:  # Disable parallel on error:
             print("W: Could not create multiprocessing.Pool.",
                   "Parallel disabled")
@@ -128,12 +131,18 @@ def map(function, iterable, *args, **kwargs):
 def starmap(function, iterables, *args, **kwargs):
     """ Equivalent to:
         return [function(x1,x2,x3,..., args[0], args[1],...) for \
-            (x1,x2,x3...) in iterable]
-        Only parallellization is enabled if possible.   
+(x1,x2,x3...) in iterable]
+
+    Keyword arguments:
+       - parallel=True/False: Force parallelization on/off
+       - chunksize=int: see multiprocessing.Pool().map
+       - pool=multiprocessing.Pool() Pass an existing pool.
+       - processes=int: see multiprocessing.Pool() processes argument
     """
     parallel = kwargs.get("parallel", HAVE_PARALLEL)
     chunksize = kwargs.get("chunksize", None)
     pool = kwargs.get("pool", None)
+    processes = kwargs.get("processes", None)
     # Check if parallel is inconsistent with HAVE_PARALLEL:
     if HAVE_PARALLEL == False and parallel == True:
         print("W: Parallelization is disabled because",
@@ -142,7 +151,7 @@ def starmap(function, iterables, *args, **kwargs):
     # Initialize pool if parallel:
     if parallel and pool is None:
         try:
-            pool = multiprocessing.Pool()
+            pool = multiprocessing.Pool(processes=processes)
         except AssertionError:  # Disable parallel on error:
             print("W: Could not create multiprocessing.Pool.",
                   "Parallel disabled")
