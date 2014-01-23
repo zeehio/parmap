@@ -49,17 +49,16 @@ map (and starmap on python 3.3) already exist. Why reinvent the wheel?
 Please correct me if I am wrong, but from my point of view, existing
 functions have some usability limitations:
 
--  The built-in python function
-   ```map`` <http://docs.python.org/dev/library/functions.html#map>`__
+-  The built-in python function ``map`` [#builtin-map]_
    is not able to parallelize.
--  ```multiprocessing.Pool().starmap`` <http://docs.python.org/dev/library/multiprocessing.html#multiprocessing.pool.Pool.starmap>`__
+-  ``multiprocessing.Pool().starmap`` [#multiproc-starmap]_
    is available in python-3.3 and later versions.
--  ```multiprocessing.Pool().map`` <http://docs.python.org/dev/library/multiprocessing.html#multiprocessing.pool.Pool.map>`__
+-  ``multiprocessing.Pool().map`` [#multiproc-map]_
    does not allow any additional argument to the mapped function.
 -  ``multiprocessing.Pool().starmap`` allows passing multiple arguments,
    but in order to pass a constant argument to the mapped function you
    will need to convert it to an iterator using
-   ```itertools.repeat`` <http://docs.python.org/2/library/itertools.html#itertools.repeat>`__\ ``(your_parameter)``
+   ``itertools.repeat(your_parameter)`` [#itertools-repeat]_
 
 Additional features in pmap:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -86,3 +85,13 @@ Acknowledgments:
 
 The original idea for this implementation was given by J.F. Sebastian at
 http://stackoverflow.com/a/5443941/446149
+
+
+References
+-----------
+
+.. [#builtin-map] http://docs.python.org/dev/library/functions.html#map
+.. [#multiproc-starmap] http://docs.python.org/dev/library/multiprocessing.html#multiprocessing.pool.Pool.starmap
+.. [#multiproc-map] http://docs.python.org/dev/library/multiprocessing.html#multiprocessing.pool.Pool.map
+.. [#itertools-repeat] http://docs.python.org/2/library/itertools.html#itertools.repeat
+
