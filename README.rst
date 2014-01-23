@@ -11,6 +11,14 @@ What does parmap offer?
 -  Parallelize transparently whenever possible.
 -  Handle multiple (positional -for now-) arguments as needed.
 
+Installation:
+-------------
+
+::
+
+  pip install parmap
+
+
 Usage:
 ------
 
