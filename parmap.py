@@ -102,6 +102,7 @@ def map(function, iterable, *args, **kwargs):
     parallel = kwargs.get("parallel", HAVE_PARALLEL)
     chunksize = kwargs.get("chunksize", None)
     pool = kwargs.get("pool", None)
+    close_pool = False
     processes = kwargs.get("processes", None)
     # Check if parallel is inconsistent with HAVE_PARALLEL:
     if HAVE_PARALLEL == False and parallel == True:
@@ -112,6 +113,7 @@ def map(function, iterable, *args, **kwargs):
     if parallel and pool is None:
         try:
             pool = multiprocessing.Pool(processes=processes)
+            close_pool = True
         except AssertionError:  # Disable parallel on error:
             print("W: Could not create multiprocessing.Pool.",
                   "Parallel disabled")
@@ -122,8 +124,9 @@ def map(function, iterable, *args, **kwargs):
                           izip(repeat(function), iterable,
                                repeat(list(args))),
                           chunksize)
-        pool.close()
-        pool.join()
+        if close_pool:
+            pool.close()
+            pool.join()
     else:
         output = [function(*([item] + list(args))) for item in iterable]
     return output
@@ -142,6 +145,7 @@ def starmap(function, iterables, *args, **kwargs):
     parallel = kwargs.get("parallel", HAVE_PARALLEL)
     chunksize = kwargs.get("chunksize", None)
     pool = kwargs.get("pool", None)
+    close_pool = False
     processes = kwargs.get("processes", None)
     # Check if parallel is inconsistent with HAVE_PARALLEL:
     if HAVE_PARALLEL == False and parallel == True:
@@ -152,6 +156,7 @@ def starmap(function, iterables, *args, **kwargs):
     if parallel and pool is None:
         try:
             pool = multiprocessing.Pool(processes=processes)
+            close_pool = True
         except AssertionError:  # Disable parallel on error:
             print("W: Could not create multiprocessing.Pool.",
                   "Parallel disabled")
@@ -162,8 +167,9 @@ def starmap(function, iterables, *args, **kwargs):
                           izip(repeat(function),
                                iterables, repeat(list(args))),
                           chunksize)
-        pool.close()
-        pool.join()
+        if close_pool:
+            pool.close()
+            pool.join()
     else:
         output = [function(*(list(item) + list(args))) for item in iterables]
     return output

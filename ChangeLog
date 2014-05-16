@@ -1,0 +1,11 @@
+parmap (1.2.1)
+
+  * Fix: Do not close pool in parmap.map and parmap.starmap if pool is
+         given as an argument.
+
+ -- Sergio Oller <sergioller@gmail.com>  Fri, 16 May 2014 13:18:58 +0200
+parmap (1.2.0)
+
+  * Initial release.
+
+ -- Sergio Oller <sergioller@gmail.com>  Thu Jan 23 12:47:46 2014 +0100
