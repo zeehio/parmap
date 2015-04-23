@@ -1,3 +1,10 @@
+parmap (1.2.2)
+
+  * Fix: Description in setup.py should be a string, not a tuple. Thanks to
+         Sam Spilsbury for pointing that out and submitting the fix.
+
+ -- Sergio Oller <sergioller@gmail.com>  Thu, 23 Apr 2015 08:49:41 +0200
+
 parmap (1.2.1)
 
   * Fix: Do not close pool in parmap.map and parmap.starmap if pool is
