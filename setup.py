@@ -7,7 +7,7 @@ with open('README.rst') as file:
 
 setup(name='parmap',
       version='1.2.1',
-      description=('map and starmap implementations passing additional',
+      description=('map and starmap implementations passing additional '
                    'arguments and parallelizing if possible'),
       long_description=long_description,
       author='Sergio Oller',
