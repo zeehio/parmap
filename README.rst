@@ -77,7 +77,7 @@ Additional features in parmap:
 -  ``parmap.map(..., ..., chunksize=3)`` # size of chunks (see
    multiprocessing.Pool().map)
 -  ``parmap.map(..., ..., pool=multiprocessing.Pool())`` # use an existing
-   pool
+   pool, in this case parmap will not close the pool.
 
 To do:
 ------
