@@ -92,8 +92,10 @@ Pull requests and suggestions are welcome.
 Acknowledgments:
 ----------------
 
-The original idea for this implementation was given by J.F. Sebastian at
-http://stackoverflow.com/a/5443941/446149
+The original idea for this implementation was 
+`given <http://stackoverflow.com/a/5443941/446149>`_ by J.F. Sebastian. I just
+provided an alternative `answer <http://stackoverflow.com/a/21292849/446149>`_
+implementing it in a package.
 
 
 References
