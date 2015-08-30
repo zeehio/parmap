@@ -120,13 +120,15 @@ def map(function, iterable, *args, **kwargs):
             parallel = False
     # Map:
     if parallel:
-        output = pool.map(_func_star_single,
-                          izip(repeat(function), iterable,
-                               repeat(list(args))),
-                          chunksize)
-        if close_pool:
-            pool.close()
-            pool.join()
+        try:
+            output = pool.map(_func_star_single,
+                              izip(repeat(function), iterable,
+                                   repeat(list(args))),
+                              chunksize)
+        finally:
+            if close_pool:
+                pool.close()
+                pool.join()
     else:
         output = [function(*([item] + list(args))) for item in iterable]
     return output
@@ -163,13 +165,15 @@ def starmap(function, iterables, *args, **kwargs):
             parallel = False
     # Map:
     if parallel:
-        output = pool.map(_func_star_many,
-                          izip(repeat(function),
-                               iterables, repeat(list(args))),
-                          chunksize)
-        if close_pool:
-            pool.close()
-            pool.join()
+        try:
+            output = pool.map(_func_star_many,
+                              izip(repeat(function),
+                                   iterables, repeat(list(args))),
+                              chunksize)
+        finally:
+            if close_pool:
+                pool.close()
+                pool.join()
     else:
         output = [function(*(list(item) + list(args))) for item in iterables]
     return output

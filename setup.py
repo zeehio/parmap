@@ -6,7 +6,7 @@ with open('README.rst') as file:
     long_description = file.read()
 
 setup(name='parmap',
-      version='1.2.2',
+      version='1.2.3',
       description=('map and starmap implementations passing additional '
                    'arguments and parallelizing if possible'),
       long_description=long_description,
@@ -26,5 +26,6 @@ setup(name='parmap',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
       ],
 )

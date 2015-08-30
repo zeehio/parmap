@@ -1,3 +1,10 @@
+parmap (1.2.3)
+
+  * Fix: Close pools if needed on exception. Thanks to saddy001 for reporting
+    the fix.
+
+ -- Sergio Oller <sergioller@gmail.com>  Sun, 30 Aug 2015 21:36:22 +0200
+
 parmap (1.2.2)
 
   * Fix: Description in setup.py should be a string, not a tuple. Thanks to
