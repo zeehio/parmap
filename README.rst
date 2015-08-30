@@ -1,6 +1,17 @@
 parmap
 ======
 
+.. image:: https://travis-ci.org/zeehio/parmap.svg?branch=master
+    :target: https://travis-ci.org/zeehio/parmap
+
+.. image:: https://readthedocs.org/projects/parmap/badge/?version=latest
+    :target: https://readthedocs.org/projects/parmap/?badge=latest
+    :alt: Documentation Status
+
+.. image:: https://img.shields.io/pypi/dm/parmap.svg
+    :target: https://pypi.python.org/pypi/parmap
+    :alt: Pypi downloads per month
+
 This small python module implements two functions: ``map`` and
 ``starmap``.
 
