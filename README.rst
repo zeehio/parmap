@@ -84,10 +84,7 @@ To do:
 
 Pull requests and suggestions are welcome.
 
--  See if anyone is interested on this
 -  Pass keyword arguments to functions?
--  Improve exception handling
--  Sphinx documentation?
 
 Acknowledgments:
 ----------------

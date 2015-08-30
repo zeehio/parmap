@@ -20,32 +20,49 @@ The implementations provided in this module allow providing additional
 arguments to the mapped functions. Additionally they will initialize
 the pool and close it automatically by default if possible.
 
-Use these module in CPU intensive map functions.
+The easiest way to learn is by reading the following examples.
 
-Usage:
-    import parmap
-    # You want to do:
-    y = [myfunction(x, argument1, argument2) for x in mylist]
-    # In parallel:
-    y = parmap.map(myfunction, mylist, argument1, argument2)
+===========
+Examples
+===========
 
-    # You want to do:
-    z = [myfunction(x, y, argument1, argument2) for (x,y) in mylist]
-    # In parallel:
-    z = parmap.starmap(myfunction, mylist, argument1, argument2)
+Map example
+===========
+You want to do:
+    >>> y1 = [myfunction(x, argument1, argument2) for x in mylist]
+In parallel:
+    >>> y2 = parmap.map(myfunction, mylist, argument1, argument2)
+Check both results:
+    >>> assert y1 == y2
 
-    # Yoy want to do:
-    listx = [1, 2, 3, 4, 5, 6]
-    listy = [2, 3, 4, 5, 6, 7]
-    param = 3.14
-    param2 = 42
-    listz = []
-    for x in listx:
-        for y in listy:
-            listz.append(myfunction(x, y, param1, param2))
-    # In parallel:
-    listz = parmap.starmap(myfunction, zip(listx,listy), param1, param2)
+Starmap example
+================
 
+You want to do:
+    >>> z1 = [myfunction(x, y, argument1, argument2) for (x,y) in mylist]
+In parallel:
+    >>> z2 = parmap.starmap(myfunction, mylist, argument1, argument2)
+Check both results:
+    >>> assert z1 == z2
+
+
+You want to do:
+    >>> listx = [1, 2, 3, 4, 5, 6]
+    >>> listy = [2, 3, 4, 5, 6, 7]
+    >>> param = 3.14
+    >>> param2 = 42
+    >>> listz1 = []
+    >>> for x in listx:
+    >>>     for y in listy:
+    >>>         listz1.append(myfunction(x, y, param1, param2))
+In parallel:
+    >>> listz2 = parmap.starmap(myfunction, zip(listx,listy), param1, param2)
+Check both results:
+    >>> assert listz1 == listz2
+
+========
+Members
+========
 """
 # The original idea for this implementation was given by J.F. Sebastian
 # at  http://stackoverflow.com/a/5443941/446149
@@ -89,15 +106,17 @@ def _func_star_many(func_items_args):
 
 
 def map(function, iterable, *args, **kwargs):
-    """
-    Equivalent to:
-    return [function(x, args[0], args[1],...) for x in iterable]
+    """This function is equivalent to:
+        >>> [function(x, args[0], args[1],...) for x in iterable]
 
-    Keyword arguments:
-       - parallel=True/False: Force parallelization on/off
-       - chunksize=int: see multiprocessing.Pool().map
-       - pool=multiprocessing.Pool() Pass an existing pool.
-       - processes=int: see multiprocessing.Pool() processes argument
+       :param parallel: Force parallelization on/off
+       :type parallel: bool
+       :param chunksize: see  :py:class:`multiprocessing.pool.Pool`
+       :type chunksize: int
+       :param pool: Pass an existing pool
+       :type pool: multiprocessing.pool.Pool
+       :param processes: Number of processes to use in the pool. See :py:class:`multiprocessing.pool.Pool`
+       :type processes: int 
     """
     parallel = kwargs.get("parallel", HAVE_PARALLEL)
     chunksize = kwargs.get("chunksize", None)
@@ -135,14 +154,17 @@ def map(function, iterable, *args, **kwargs):
 
 def starmap(function, iterables, *args, **kwargs):
     """ Equivalent to:
-        return [function(x1,x2,x3,..., args[0], args[1],...) for \
-(x1,x2,x3...) in iterable]
+            >>> return ([function(x1,x2,x3,..., args[0], args[1],...) for (x1,x2,x3...)
+            >>>         in iterable])
 
-    Keyword arguments:
-       - parallel=True/False: Force parallelization on/off
-       - chunksize=int: see multiprocessing.Pool().map
-       - pool=multiprocessing.Pool() Pass an existing pool.
-       - processes=int: see multiprocessing.Pool() processes argument
+       :param parallel: Force parallelization on/off
+       :type parallel: bool
+       :param chunksize: see  :py:class:`multiprocessing.pool.Pool`
+       :type chunksize: int
+       :param pool: Pass an existing pool
+       :type pool: multiprocessing.pool.Pool
+       :param processes: Number of processes to use in the pool. See :py:class:`multiprocessing.pool.Pool`
+       :type processes: int 
     """
     parallel = kwargs.get("parallel", HAVE_PARALLEL)
     chunksize = kwargs.get("chunksize", None)
