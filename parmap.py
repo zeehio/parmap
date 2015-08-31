@@ -72,6 +72,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from __future__ import division
 
+import warnings
+
 try:
     from itertools import izip
 except ImportError:  # Python 3 built-in zip already returns iterable
@@ -125,17 +127,16 @@ def map(function, iterable, *args, **kwargs):
     processes = kwargs.get("processes", None)
     # Check if parallel is inconsistent with HAVE_PARALLEL:
     if HAVE_PARALLEL == False and parallel == True:
-        print("W: Parallelization is disabled because",
-              "multiprocessing is missing")
+        warnings.warn("Parallelization is disabled because "
+                      "multiprocessing is missing")
         parallel = False
     # Initialize pool if parallel:
     if parallel and pool is None:
         try:
             pool = multiprocessing.Pool(processes=processes)
             close_pool = True
-        except AssertionError:  # Disable parallel on error:
-            print("W: Could not create multiprocessing.Pool.",
-                  "Parallel disabled")
+        except Exception as exc:  # Disable parallel on error:
+            warnings.warn(str(exc))
             parallel = False
     # Map:
     if parallel:
@@ -173,17 +174,16 @@ def starmap(function, iterables, *args, **kwargs):
     processes = kwargs.get("processes", None)
     # Check if parallel is inconsistent with HAVE_PARALLEL:
     if HAVE_PARALLEL == False and parallel == True:
-        print("W: Parallelization is disabled because",
-              "multiprocessing is missing")
+        warnings.warn("Parallelization is disabled because "
+                      "multiprocessing is missing")
         parallel = False
     # Initialize pool if parallel:
     if parallel and pool is None:
         try:
             pool = multiprocessing.Pool(processes=processes)
             close_pool = True
-        except AssertionError:  # Disable parallel on error:
-            print("W: Could not create multiprocessing.Pool.",
-                  "Parallel disabled")
+        except Exception as exc:  # Disable parallel on error:
+            warnings.warn(str(exc))
             parallel = False
     # Map:
     if parallel:
@@ -199,30 +199,4 @@ def starmap(function, iterables, *args, **kwargs):
     else:
         output = [function(*(list(item) + list(args))) for item in iterables]
     return output
-
-
-if __name__ == "__main__":
-    multiprocessing.freeze_support()
-    def _func(*aaa):
-        """ Prints and returns the inputs. Trivial example."""
-        print(aaa)
-        return aaa
-    print("Example1: Begins")
-    ITEMS = [1, 2, 3, 4]
-    OUT = map(_func, ITEMS, 5, 6, 7, 8, parallel=False)
-    print("Using parallel:")
-    OUT_P = map(_func, ITEMS, 5, 6, 7, 8, parallel=True)
-    if OUT != OUT_P:
-        print("Example1: Failed")
-    else:
-        print("Example1: Success")
-    print("Example2: Begins")
-    ITEMS = [(1, 'a'), (2, 'b'), (3, 'c')]
-    OUT = starmap(_func, ITEMS, 5, 6, 7, 8, parallel=False)
-    print("Using parallel")
-    OUT_P = starmap(_func, ITEMS, 5, 6, 7, 8, parallel=True)
-    if OUT != OUT_P:
-        print("Example2: Failed")
-    else:
-        print("Example2: Success")
 
