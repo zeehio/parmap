@@ -8,6 +8,9 @@ parmap
     :target: https://readthedocs.org/projects/parmap/?badge=latest
     :alt: Documentation Status
 
+.. image:: http://codecov.io/github/zeehio/parmap/coverage.svg?branch=master
+    :target: http://codecov.io/github/zeehio/parmap?branch=master
+
 .. image:: https://img.shields.io/pypi/dm/parmap.svg
     :target: https://pypi.python.org/pypi/parmap
     :alt: Pypi downloads per month
