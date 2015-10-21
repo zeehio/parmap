@@ -1,0 +1,39 @@
+package:
+  name: parmap
+  version: !!str 1.2.3
+
+source:
+  fn: parmap-1.2.3.tar.gz
+  url: https://pypi.python.org/packages/source/p/parmap/parmap-1.2.3.tar.gz
+
+requirements:
+  build:
+    - python
+
+  run:
+    - python
+
+test:
+  # Python imports
+  imports:
+    - parmap
+
+  #commands:
+    # You can put test commands to be run here.  Use this to test that the
+    # entry points work.
+
+
+  # You can also put a file called run_test.py in the recipe that will be run
+  # at test time.
+
+  # requires:
+    # Put any additional test requirements here.  For example
+    # - nose
+
+about:
+  home: https://github.com/zeehio/parmap
+  license: Apache Software License
+
+# See
+# http://docs.continuum.io/conda/build.html for
+# more information about meta.yaml
