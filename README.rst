@@ -11,6 +11,10 @@ parmap
 .. image:: https://codecov.io/github/zeehio/parmap/coverage.svg?branch=master
     :target: https://codecov.io/github/zeehio/parmap?branch=master
 
+.. image:: https://codeclimate.com/github/zeehio/parmap/badges/gpa.svg
+   :target: https://codeclimate.com/github/zeehio/parmap
+   :alt: Code Climate
+
 .. image:: https://img.shields.io/pypi/dm/parmap.svg
     :target: https://pypi.python.org/pypi/parmap
     :alt: Pypi downloads per month

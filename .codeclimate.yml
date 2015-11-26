@@ -1,0 +1,13 @@
+---
+engines:
+  fixme:
+    enabled: true
+  pep8:
+    enabled: true
+  radon:
+    enabled: true
+ratings:
+  paths:
+  - "**.py"
+exclude_paths:
+- docs/conf.py
