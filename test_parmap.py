@@ -2,7 +2,9 @@ import unittest
 import warnings
 import parmap
 
+
 def _identity(*x):
+    """ Dummy function to not do anything"""
     return x
 
 
@@ -23,12 +25,12 @@ class TestParmap(unittest.TestCase):
 
     def test_warn_wrong_argument_map(self):
         with warnings.catch_warnings(record=True) as w:
-            parmap.map(range, [1,2], processes=-3)
+            parmap.map(range, [1, 2], processes=-3)
             assert len(w) == 1
 
     def test_warn_wrong_argument_starmap(self):
         with warnings.catch_warnings(record=True) as w:
-            parmap.starmap(range, [(0,2), (2,5)], processes=-3)
+            parmap.starmap(range, [(0, 2), (2, 5)], processes=-3)
             assert len(w) == 1
 
 
@@ -39,4 +41,3 @@ if __name__ == '__main__':
     except:
         pass
     unittest.main()
-

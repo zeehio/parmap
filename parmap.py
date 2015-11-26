@@ -87,24 +87,46 @@ try:
 except ImportError:
     HAVE_PARALLEL = False
 
+
 def _func_star_single(func_item_args):
     """Equivalent to:
        func = func_item_args[0]
        item = func_item_args[1]
        args = func_item_args[2:]
-       return func(item,args[0],args[1],...)  
+       return func(item,args[0],args[1],...)
     """
     return func_item_args[0](*[func_item_args[1]] + func_item_args[2])
+
 
 def _func_star_many(func_items_args):
     """Equivalent to:
        func = func_item_args[0]
        items = func_item_args[1]
        args = func_item_args[2:]
-       return func(items[0],items[1],...,args[0],args[1],...)  
+       return func(items[0],items[1],...,args[0],args[1],...)
     """
     return func_items_args[0](*list(func_items_args[1]) + func_items_args[2])
 
+
+def _create_pool(kwargs):
+    parallel = kwargs.get("parallel", HAVE_PARALLEL)
+    pool = kwargs.get("pool", None)
+    close_pool = False
+    processes = kwargs.get("processes", None)
+    # Check if parallel is inconsistent with HAVE_PARALLEL:
+    if HAVE_PARALLEL is False and parallel is True:
+        warnings.warn("Parallelization is disabled because "
+                      "multiprocessing is missing")
+        parallel = False
+    # Initialize pool if parallel:
+    if parallel and pool is None:
+        try:
+            pool = multiprocessing.Pool(processes=processes)
+            close_pool = True
+        except Exception as exc:  # Disable parallel on error:
+            warnings.warn(str(exc))
+            parallel = False
+    return parallel, pool, close_pool
 
 
 def map(function, iterable, *args, **kwargs):
@@ -117,27 +139,12 @@ def map(function, iterable, *args, **kwargs):
        :type chunksize: int
        :param pool: Pass an existing pool
        :type pool: multiprocessing.pool.Pool
-       :param processes: Number of processes to use in the pool. See :py:class:`multiprocessing.pool.Pool`
-       :type processes: int 
+       :param processes: Number of processes to use in the pool. See
+         :py:class:`multiprocessing.pool.Pool`
+       :type processes: int
     """
-    parallel = kwargs.get("parallel", HAVE_PARALLEL)
     chunksize = kwargs.get("chunksize", None)
-    pool = kwargs.get("pool", None)
-    close_pool = False
-    processes = kwargs.get("processes", None)
-    # Check if parallel is inconsistent with HAVE_PARALLEL:
-    if HAVE_PARALLEL == False and parallel == True:
-        warnings.warn("Parallelization is disabled because "
-                      "multiprocessing is missing")
-        parallel = False
-    # Initialize pool if parallel:
-    if parallel and pool is None:
-        try:
-            pool = multiprocessing.Pool(processes=processes)
-            close_pool = True
-        except Exception as exc:  # Disable parallel on error:
-            warnings.warn(str(exc))
-            parallel = False
+    parallel, pool, close_pool = _create_pool(kwargs)
     # Map:
     if parallel:
         try:
@@ -153,10 +160,11 @@ def map(function, iterable, *args, **kwargs):
         output = [function(*([item] + list(args))) for item in iterable]
     return output
 
+
 def starmap(function, iterables, *args, **kwargs):
     """ Equivalent to:
-            >>> return ([function(x1,x2,x3,..., args[0], args[1],...) for (x1,x2,x3...)
-            >>>         in iterable])
+            >>> return ([function(x1,x2,x3,..., args[0], args[1],...) for
+            >>>         (x1,x2,x3...) in iterable])
 
        :param parallel: Force parallelization on/off
        :type parallel: bool
@@ -164,27 +172,12 @@ def starmap(function, iterables, *args, **kwargs):
        :type chunksize: int
        :param pool: Pass an existing pool
        :type pool: multiprocessing.pool.Pool
-       :param processes: Number of processes to use in the pool. See :py:class:`multiprocessing.pool.Pool`
-       :type processes: int 
+       :param processes: Number of processes to use in the pool. See
+                         :py:class:`multiprocessing.pool.Pool`
+       :type processes: int
     """
-    parallel = kwargs.get("parallel", HAVE_PARALLEL)
     chunksize = kwargs.get("chunksize", None)
-    pool = kwargs.get("pool", None)
-    close_pool = False
-    processes = kwargs.get("processes", None)
-    # Check if parallel is inconsistent with HAVE_PARALLEL:
-    if HAVE_PARALLEL == False and parallel == True:
-        warnings.warn("Parallelization is disabled because "
-                      "multiprocessing is missing")
-        parallel = False
-    # Initialize pool if parallel:
-    if parallel and pool is None:
-        try:
-            pool = multiprocessing.Pool(processes=processes)
-            close_pool = True
-        except Exception as exc:  # Disable parallel on error:
-            warnings.warn(str(exc))
-            parallel = False
+    parallel, pool, close_pool = _create_pool(kwargs)
     # Map:
     if parallel:
         try:
@@ -199,4 +192,3 @@ def starmap(function, iterables, *args, **kwargs):
     else:
         output = [function(*(list(item) + list(args))) for item in iterables]
     return output
-
