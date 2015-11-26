@@ -25,11 +25,13 @@ class TestParmap(unittest.TestCase):
 
     def test_warn_wrong_argument_map(self):
         with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
             parmap.map(range, [1, 2], processes=-3)
             assert len(w) == 1
 
     def test_warn_wrong_argument_starmap(self):
         with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
             parmap.starmap(range, [(0, 2), (2, 5)], processes=-3)
             assert len(w) == 1
 
