@@ -13,6 +13,9 @@ requirements:
   run:
     - python
 
+build:
+  noarch_python: True
+
 test:
   # Python imports
   imports:
