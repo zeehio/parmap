@@ -57,6 +57,8 @@ This is a list of things to do before a release:
   (appending :code:`.9000`). Update the version and release in
   :code:`docs/conf.py`. Commit and push.
 
+- Upload to conda: Edit conda.recipe/meta.yaml. Both the `version` field and the
+  source section. Use `conda-build` and upload to anaconda.
 
 References
 -----------
