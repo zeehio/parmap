@@ -49,15 +49,15 @@ Check both results:
 You want to do:
     >>> listx = [1, 2, 3, 4, 5, 6]
     >>> listy = [2, 3, 4, 5, 6, 7]
-    >>> param = 3.14
-    >>> param2 = 42
+    >>> a = 3.14
+    >>> b = 42
     >>> listz1 = []
     >>> for x in listx:
     >>>     for y in listy:
-    >>>         listz1.append(myfunction(x, y, param1, param2))
+    >>>         listz1.append(myfunction(x, y, a, b))
 In parallel:
-    >>> import itertools
-    >>> listz2 = parmap.starmap(myfunction, itertools.product(listx,listy), param1, param2)
+    >>> from itertools import product
+    >>> listz2 = parmap.starmap(myfunction, product(listx, listy), a, b)
 Check both results:
     >>> assert listz1 == listz2
 
