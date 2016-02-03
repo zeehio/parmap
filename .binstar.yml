@@ -1,5 +1,11 @@
 package: parmap
 
+engine:
+  - python=2.7
+  - python=3.3
+  - python=3.4
+  - python=3.5
+
 install:
   - conda config --set always_yes true
 
