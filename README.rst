@@ -115,8 +115,8 @@ implementing it in a package.
 Known works using parmap
 ---------------------------
 
-- Davide Gerosa, Michael Kesden, PRECESSION. Dynamics of spinning black-hole
-  binaries with python. `arXiv:1605.01067 <https://arxiv.org/abs/1605.01067>`_
+- Davide Gerosa, Michael Kesden, "PRECESSION. Dynamics of spinning black-hole
+  binaries with python." `arXiv:1605.01067 <https://arxiv.org/abs/1605.01067>`_, 2016
 
 References
 -----------
