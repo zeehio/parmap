@@ -74,6 +74,7 @@ from __future__ import unicode_literals
 from __future__ import division
 
 import warnings
+import sys
 
 try:
     from itertools import izip
@@ -173,7 +174,7 @@ def map_async(function, iterable, *args, **kwargs):
        :type chunksize: int
        :param callback: see  :py:class:`multiprocessing.pool.Pool`
        :type callback: function
-       :param error_callback: see  :py:class:`multiprocessing.pool.Pool`
+       :param error_callback: (on python 3) see  :py:class:`multiprocessing.pool.Pool`
        :type error_callback: function
        :param pool: Pass an existing pool.
        :type pool: multiprocessing.pool.Pool
@@ -188,10 +189,16 @@ def map_async(function, iterable, *args, **kwargs):
     # Map:
     if parallel:
         try:
-            output = pool.map_async(_func_star_single,
-                                    izip(repeat(function), iterable,
-                                         repeat(list(args))),
-                                    chunksize, callback, error_callback)
+            if sys.version_info[0] == 2:  # python2 does not support error_callback
+                output = pool.map_async(_func_star_single,
+                                        izip(repeat(function), iterable,
+                                             repeat(list(args))),
+                                        chunksize, callback)
+            else:
+                output = pool.map_async(_func_star_single,
+                                        izip(repeat(function), iterable,
+                                             repeat(list(args))),
+                                        chunksize, callback, error_callback)
         finally:
             if close_pool:
                 pool.close()
@@ -260,10 +267,16 @@ def starmap_async(function, iterables, *args, **kwargs):
     # Map:
     if parallel:
         try:
-            output = pool.map_async(_func_star_many,
-                                    izip(repeat(function),
-                                    iterables, repeat(list(args))),
-                                    chunksize)
+            if sys.version_info[0] == 2:
+                output = pool.map_async(_func_star_many,
+                                        izip(repeat(function),
+                                        iterables, repeat(list(args))),
+                                        chunksize)
+            else:
+                output = pool.map_async(_func_star_many,
+                                        izip(repeat(function),
+                                        iterables, repeat(list(args))),
+                                        chunksize, error_callback)
         finally:
             if close_pool:
                 pool.close()
