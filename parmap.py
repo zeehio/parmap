@@ -161,6 +161,44 @@ def map(function, iterable, *args, **kwargs):
         output = [function(*([item] + list(args))) for item in iterable]
     return output
 
+def map_async(function, iterable, *args, **kwargs):
+    """This function is the multiprocessing.Pool.map_async version that
+       supports multiple arguments.
+       
+        >>> [function(x, args[0], args[1],...) for x in iterable]
+
+       :param parallel: Force parallelization on/off
+       :type parallel: bool
+       :param chunksize: see  :py:class:`multiprocessing.pool.Pool`
+       :type chunksize: int
+       :param callback: see  :py:class:`multiprocessing.pool.Pool`
+       :type callback: function
+       :param error_callback: see  :py:class:`multiprocessing.pool.Pool`
+       :type error_callback: function
+       :param pool: Pass an existing pool.
+       :type pool: multiprocessing.pool.Pool
+       :param processes: Number of processes to use in the pool. See
+         :py:class:`multiprocessing.pool.Pool`
+       :type processes: int
+    """
+    chunksize = kwargs.get("chunksize", None)
+    callback = kwargs.get("callback", None)
+    error_callback = kwargs.get("error_callback", None)
+    parallel, pool, close_pool = _create_pool(kwargs)
+    # Map:
+    if parallel:
+        try:
+            output = pool.map_async(_func_star_single,
+                                    izip(repeat(function), iterable,
+                                         repeat(list(args))),
+                                    chunksize, callback, error_callback)
+        finally:
+            if close_pool:
+                pool.close()
+                pool.join()
+    else:
+        output = [function(*([item] + list(args))) for item in iterable]
+    return output
 
 def starmap(function, iterables, *args, **kwargs):
     """ Equivalent to:
@@ -186,6 +224,46 @@ def starmap(function, iterables, *args, **kwargs):
                               izip(repeat(function),
                                    iterables, repeat(list(args))),
                               chunksize)
+        finally:
+            if close_pool:
+                pool.close()
+                pool.join()
+    else:
+        output = [function(*(list(item) + list(args))) for item in iterables]
+    return output
+
+def starmap_async(function, iterables, *args, **kwargs):
+    """This function is the multiprocessing.Pool.starmap_async version that
+       supports multiple arguments.
+
+            >>> return ([function(x1,x2,x3,..., args[0], args[1],...) for
+            >>>         (x1,x2,x3...) in iterable])
+
+       :param parallel: Force parallelization on/off
+       :type parallel: bool
+       :param chunksize: see  :py:class:`multiprocessing.pool.Pool`
+       :type chunksize: int
+       :param callback: see  :py:class:`multiprocessing.pool.Pool`
+       :type callback: function
+       :param error_callback: see  :py:class:`multiprocessing.pool.Pool`
+       :type error_callback: function
+       :param pool: Pass an existing pool.
+       :type pool: multiprocessing.pool.Pool
+       :param processes: Number of processes to use in the pool. See
+         :py:class:`multiprocessing.pool.Pool`
+       :type processes: int
+    """
+    chunksize = kwargs.get("chunksize", None)
+    callback = kwargs.get("callback", None)
+    error_callback = kwargs.get("error_callback", None)
+    parallel, pool, close_pool = _create_pool(kwargs)
+    # Map:
+    if parallel:
+        try:
+            output = pool.map_async(_func_star_many,
+                                    izip(repeat(function),
+                                    iterables, repeat(list(args))),
+                                    chunksize)
         finally:
             if close_pool:
                 pool.close()

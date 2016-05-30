@@ -15,6 +15,7 @@ setup(name='parmap',
       author_email='sergioller@gmail.com',
       url='https://github.com/zeehio/parmap',
       py_modules=['parmap'],
+      test_suite = "test_parmap.py",
       classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
