@@ -82,12 +82,7 @@ except ImportError:  # Python 3 built-in zip already returns iterable
     izip = zip
 
 from itertools import repeat
-
-try:
-    import multiprocessing
-    HAVE_PARALLEL = True
-except ImportError:
-    HAVE_PARALLEL = False
+import multiprocessing
 
 
 def _func_star_single(func_item_args):
@@ -111,15 +106,10 @@ def _func_star_many(func_items_args):
 
 
 def _create_pool(kwargs):
-    parallel = kwargs.get("parallel", HAVE_PARALLEL)
+    parallel = kwargs.get("parallel", True)
     pool = kwargs.get("pool", None)
     close_pool = False
     processes = kwargs.get("processes", None)
-    # Check if parallel is inconsistent with HAVE_PARALLEL:
-    if HAVE_PARALLEL is False and parallel is True:
-        warnings.warn("Parallelization is disabled because "
-                      "multiprocessing is missing")
-        parallel = False
     # Initialize pool if parallel:
     if parallel and pool is None:
         try:
