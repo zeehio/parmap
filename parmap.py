@@ -84,6 +84,11 @@ except ImportError:  # Python 3 built-in zip already returns iterable
 from itertools import repeat
 import multiprocessing
 
+try:
+    import tqdm
+    HAVE_TQDM = True
+except ImportError:
+    HAVE_TQDM = False
 
 def _func_star_single(func_item_args):
     """Equivalent to:
@@ -134,19 +139,61 @@ def map(function, iterable, *args, **kwargs):
        :param processes: Number of processes to use in the pool. See
          :py:class:`multiprocessing.pool.Pool`
        :type processes: int
+       :param parmap_progress: Show progress bar
+       :type parmap_progress: bool
     """
     chunksize = kwargs.get("chunksize", None)
+    progress = kwargs.get("parmap_progress", False)
+    if progress and not HAVE_TQDM:
+        progress = False
     parallel, pool, close_pool = _create_pool(kwargs)
     # Map:
     if parallel:
         try:
-            output = pool.map(_func_star_single,
-                              izip(repeat(function), iterable,
-                                   repeat(list(args))),
-                              chunksize)
+            if progress and close_pool:
+                num_tasks = len(iterable)
+                # chunksize default from multiprocessing:
+                if chunksize is None:
+                    chunksize, extra = divmod(num_tasks, len(pool._pool) * 4)
+                    if extra:
+                        chunksize += 1
+                # use map_async to get progress information
+                result = pool.map_async(_func_star_single,
+                                        izip(repeat(function), iterable,
+                                             repeat(list(args))),
+                                        chunksize)
+                pool.close()
+                # Progress bar stuff:
+                try:
+                    remaining = num_tasks
+                    # tqdm provides a progress bar.
+                    # the pbar needs to be updated with the increment on each
+                    # iteration.
+                    with tqdm.tqdm(total=num_tasks) as pbar:
+                        while True:
+                            if (result.ready()):
+                                pbar.update(remaining)
+                                break
+                            try:
+                                remaining_now = result._number_left*chunksize
+                                done_now = remaining - remaining_now
+                                remaining = remaining_now
+                            except:
+                                break
+                            if done_now > 0:
+                                pbar.update(done_now)
+                            result.wait(2) # update every two seconds
+                finally:
+                    output = result.get()
+            else:
+                output = pool.map(_func_star_single,
+                                  izip(repeat(function), iterable,
+                                       repeat(list(args))),
+                                  chunksize)
         finally:
             if close_pool:
-                pool.close()
+                if not progress:
+                    pool.close()
                 pool.join()
     else:
         output = [function(*([item] + list(args))) for item in iterable]

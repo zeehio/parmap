@@ -19,6 +19,14 @@ class TestParmap(unittest.TestCase):
         self.assertEqual(pfalse, ptrue)
         self.assertEqual(pfalse, noparmap)
 
+    def test_map_progress(self):
+        items = range(10)
+        pfalse = parmap.map(_identity, items, parmap_progress=False)
+        ptrue = parmap.map(_identity, items, parmap_progress=True)
+        noparmap = list(map(_identity, items))
+        self.assertEqual(pfalse, ptrue)
+        self.assertEqual(pfalse, noparmap)
+
     def test_map_async(self):
         items = range(4)
         pfalse = parmap.map_async(_identity, items, parallel=False)

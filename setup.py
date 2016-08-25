@@ -15,6 +15,9 @@ setup(name='parmap',
       author_email='sergioller@gmail.com',
       url='https://github.com/zeehio/parmap',
       py_modules=['parmap'],
+      extras_require = {
+          'progress_bar':  ["tqdm>=4.8.4"],
+      },
       test_suite = "test_parmap.py",
       classifiers=[
         'Development Status :: 5 - Production/Stable',
