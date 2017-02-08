@@ -144,7 +144,7 @@ def map(function, iterable, *args, **kwargs):
     """
     chunksize = kwargs.get("chunksize", None)
     progress = kwargs.get("parmap_progress", False)
-    if progress and not HAVE_TQDM:
+    if progress and HAVE_TQDM:
         progress = False
     parallel, pool, close_pool = _create_pool(kwargs)
     # Map:
