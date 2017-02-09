@@ -4,8 +4,14 @@ python:
   - "2.7"
   - "3.3"
   - "3.4"
+  - "3.5"
+  - "3.7"
+env:
+  - WITH_TQDM="YES"
+  - WITH_TQDM="NO"
 before_install:
   - pip install coverage codecov
+  - [ "${WITH_TQDM}" = "YES" ] && pip install tqdm
 script:
   - coverage run --parallel-mode --concurrency=multiprocessing test_parmap.py
   - coverage combine
