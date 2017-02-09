@@ -5,13 +5,16 @@ python:
   - "3.3"
   - "3.4"
   - "3.5"
-  - "3.7"
+  - "3.6"
+  # PyPy versions
+  - "pypy"  # PyPy2 2.5.0
+  - "pypy3" # Pypy3 2.4.0
 env:
   - WITH_TQDM="YES"
   - WITH_TQDM="NO"
 before_install:
   - pip install coverage codecov
-  - [ "${WITH_TQDM}" = "YES" ] && pip install tqdm
+  - test "${WITH_TQDM}" = "YES" && pip install tqdm || echo "Test without tqdm"
 script:
   - coverage run --parallel-mode --concurrency=multiprocessing test_parmap.py
   - coverage combine
