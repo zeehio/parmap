@@ -24,6 +24,8 @@ Creating a new release
 
 This is a list of things to do before a release:
 
+- Review the ChangeLog file and add items if necessary.
+
 - Bump the version in :code:`setup.py` to a valid release version (without
   :code:`DEVELOPMENT`). Update the version and release in :code:`docs/conf.py`.
   Commit.
@@ -33,7 +35,7 @@ This is a list of things to do before a release:
 - Push the release to :code:`origin` [#origin]_: :code:`git push origin --tags`.
 
 - Check that the testsuite [#travis]_ and the documentation [#readthedocs]_
-  is updated properly.
+  are updated properly.
 
 - Build the source distribution and the binary wheel
 
