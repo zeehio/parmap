@@ -1,10 +1,10 @@
 package:
   name: parmap
-  version: !!str 1.3.0
+  version: !!str 1.4.0
 
 source:
-  fn: parmap-1.3.0.tar.gz
-  url: https://pypi.python.org/packages/source/p/parmap/parmap-1.3.0.tar.gz
+  fn: parmap-1.4.0.tar.gz
+  url: https://pypi.python.org/packages/6e/d2/400781417eaf123e5ff394ce428dc3e4175f6065b1f20ed5f6d6a3307210/parmap-1.4.0.tar.gz
 
 requirements:
   build:
@@ -12,6 +12,7 @@ requirements:
 
   run:
     - python
+    - tqdm # optional dependency
 
 test:
   # Python imports
