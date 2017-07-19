@@ -1,3 +1,9 @@
+parmap (1.4.0)
+
+  * Feature: Add progress bar to parmap.map if tqdm is installed
+
+ -- Sergio Oller <sergioller@gmail.com>  Wed, 19 Jul 2017 10:21:00 +0200
+
 parmap (1.3.0)
 
   * Feature: Add map_async and starmap_async functions (that support multiple arguments)
