@@ -42,25 +42,20 @@ This is a list of things to do before a release:
 .. code:: bash
 
     python setup.py sdist
-    # pip install -U "pip>=1.4" "setuptools>=0.9" "wheel>=0.21"
+    # pip install --user -U "pip>=1.4" "setuptools>=0.9" "wheel>=0.21"
     python setup.py bdist_wheel
 
 - Check that there are no missing files in :code:`dist/parmap-x.y.z.tar.gz` and
   on :code:`dist/parmap-x.y.z-py2.py3-none-any.whl`.
 
-- Upload to pypi:
+- Upload to pypi: :code:`twine  upload dist/*`
 
-.. code:: bash
-
-    twine  upload -s dist/parmap-x.y.z.tar.gz  -p yourpassword
-    twine  upload -s dist/parmap-x.y.z-py2.py3-none-any.whl  -p yourpassword
+- Upload to conda: Edit :code:`conda.recipe/meta.yaml`. Change both the `version` field and the
+  source section. Use `conda-build` and upload to anaconda.
 
 - Bump the version in :code:`setup.py` to a valid development version 
   (appending :code:`.9000`). Update the version and release in
   :code:`docs/conf.py`. Commit and push.
-
-- Upload to conda: Edit conda.recipe/meta.yaml. Both the `version` field and the
-  source section. Use `conda-build` and upload to anaconda.
 
 References
 -----------
