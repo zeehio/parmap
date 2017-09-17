@@ -155,6 +155,61 @@ def _get_default_chunksize(chunksize, pool, num_tasks):
             chunksize += 1
     return chunksize
 
+def _map_or_starmap(function, iterable, args, kwargs, map_or_starmap):
+    """
+    """
+    chunksize = kwargs.get("chunksize", None)
+    progress = kwargs.get("parmap_progress", False)
+    progress = progress and HAVE_TQDM
+    parallel, pool, close_pool = _create_pool(kwargs)
+    # Map:
+    if parallel:
+        if map_or_starmap == "map":
+            func_star = _func_star_single
+        elif map_or_starmap == "starmap":
+            func_star = _func_star_many
+        else:
+            raise AssertionError("Internal parmap error: Invalid map_or_starmap. " +
+                                 "This should not happen")
+        try:
+            if progress and close_pool:
+                try:
+                    num_tasks = len(iterable)
+                    # get a chunksize (as multiprocessing does):
+                    chunksize = _get_default_chunksize(chunksize, pool, num_tasks)
+                    # use map_async to get progress information
+                    result = pool.map_async(func_star,
+                                            izip(repeat(function), iterable,
+                                                 repeat(list(args))),
+                                            chunksize)
+                finally:
+                    pool.close()
+                # Progress bar:
+                try:
+                    _do_pbar(result, num_tasks, chunksize)
+                finally:
+                    output = result.get()
+            else:
+                output = pool.map(func_star,
+                                  izip(repeat(function), iterable,
+                                       repeat(list(args))),
+                                  chunksize)
+        finally:
+            if close_pool:
+                if not progress:
+                    pool.close()
+                pool.join()
+    else:
+        if map_or_starmap == "map":
+            output = [function(*([item] + list(args))) for item in iterable]
+        elif map_or_starmap == "starmap":
+            output = [function(*(list(item) + list(args))) for item in iterable]
+        else:
+            raise AssertionError("Internal parmap error: Invalid map_or_starmap. " +
+                                 "This should not happen")
+
+    return output
+
 
 def map(function, iterable, *args, **kwargs):
     """This function is equivalent to:
@@ -172,43 +227,7 @@ def map(function, iterable, *args, **kwargs):
        :param parmap_progress: Show progress bar
        :type parmap_progress: bool
     """
-    chunksize = kwargs.get("chunksize", None)
-    progress = kwargs.get("parmap_progress", False)
-    progress = progress and HAVE_TQDM
-    parallel, pool, close_pool = _create_pool(kwargs)
-    # Map:
-    if parallel:
-        try:
-            if progress and close_pool:
-                try:
-                    num_tasks = len(iterable)
-                    # get a chunksize (as multiprocessing does):
-                    chunksize = _get_default_chunksize(chunksize, pool, num_tasks)
-                    # use map_async to get progress information
-                    result = pool.map_async(_func_star_single,
-                                            izip(repeat(function), iterable,
-                                                 repeat(list(args))),
-                                            chunksize)
-                finally:
-                    pool.close()
-                # Progress bar:
-                try:
-                    _do_pbar(result, num_tasks, chunksize)
-                finally:
-                    output = result.get()
-            else:
-                output = pool.map(_func_star_single,
-                                  izip(repeat(function), iterable,
-                                       repeat(list(args))),
-                                  chunksize)
-        finally:
-            if close_pool:
-                if not progress:
-                    pool.close()
-                pool.join()
-    else:
-        output = [function(*([item] + list(args))) for item in iterable]
-    return output
+    return _map_or_starmap(function, iterable, args, kwargs, "map")
 
 def map_async(function, iterable, *args, **kwargs):
     """This function is the multiprocessing.Pool.map_async version that
@@ -272,43 +291,7 @@ def starmap(function, iterables, *args, **kwargs):
        :param parmap_progress: Show progress bar
        :type parmap_progress: bool
     """
-    chunksize = kwargs.get("chunksize", None)
-    progress = kwargs.get("parmap_progress", False)
-    progress = progress and HAVE_TQDM
-    parallel, pool, close_pool = _create_pool(kwargs)
-    # Map:
-    if parallel:
-        try:
-            if progress and close_pool:
-                try:
-                    num_tasks = len(iterable)
-                    # get a chunksize (as multiprocessing does):
-                    chunksize = _get_default_chunksize(chunksize, pool, num_tasks)
-                    # use map_async to get progress information
-                    result = pool.map_async(_func_star_many,
-                                            izip(repeat(function), iterables,
-                                                 repeat(list(args))),
-                                            chunksize)
-                finally:
-                    pool.close()
-                # Progress bar:
-                try:
-                    _do_pbar(result, num_tasks, chunksize)
-                finally:
-                    output = result.get()
-            else:
-                output = pool.map(_func_star_many,
-                                  izip(repeat(function),
-                                       iterables, repeat(list(args))),
-                                  chunksize)
-        finally:
-            if close_pool:
-                if not progress:
-                    pool.close()
-                pool.join()
-    else:
-        output = [function(*(list(item) + list(args))) for item in iterables]
-    return output
+    return _map_or_starmap(function, iterables, args, kwargs, "starmap")
 
 def starmap_async(function, iterables, *args, **kwargs):
     """This function is the multiprocessing.Pool.starmap_async version that
