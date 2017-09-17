@@ -108,11 +108,12 @@ Additional features in parmap:
 Limitations:
 ------
 
-Both ``parmap.map()`` and ``parmap.starmap()`` (and their async versions) have arguments
-to control parallelization, the use of a pool, whether or not to show a progress bar, etc...
-In your functions, avoid using conflicting parmap keyword arguments. The list of conflicting
-arguments is: ``parallel``, ``chunksize``, ``pool``, ``processes``, ``callback``,
-``error_callback`` and any argument starting with ``parmap_``.
+Both ``parmap.map()`` and ``parmap.starmap()`` (and their async versions) have their own 
+arguments (to control parallelization parameters, the use of a pool, show a progress bar, etc...).
+In your functions, avoid using keyword arguments with the same name. The list of conflicting
+arguments you should avoid in any function passed to parmap is: ``parallel``, ``chunksize``,
+``pool``, ``processes``, ``callback``, ``error_callback`` and any argument starting with ``parmap_``.
+
 
 Acknowledgments:
 ----------------
