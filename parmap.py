@@ -336,3 +336,35 @@ def starmap_async(function, iterables, *args, **kwargs):
     """
     return _map_or_starmap_async(function, iterables, args, kwargs, "starmap")
 
+# Needs testing, but it might work as it is:
+
+#def _serial_imap_or_istarmap(function, iterable, args, kwargs, map_or_starmap):
+#    if map_or_starmap == "map":
+#        output = (function(*([item] + list(args)), **kwargs) for item in iterable)
+#    elif map_or_starmap == "starmap":
+#        output = (function(*(list(item) + list(args)), **kwargs) for item in iterable)
+#    else:
+#        raise AssertionError("Internal parmap error: Invalid map_or_starmap. " +
+#                             "This should not happen")
+#    return output
+
+
+#def imap(function, iterable, *args, **kwargs):
+#    chunksize = kwargs.pop("chunksize", 1)
+#    parallel, pool, close_pool = _create_pool(kwargs)
+#    # Map:
+#    if parallel:
+#        func_star = _get_helper_func("map")
+#        try:
+#            output = pool.imap(func_star,
+#                               izip(repeat(function), iterable,
+#                                    repeat(list(args)), repeat(kwargs)),
+#                               chunksize)
+#        finally:
+#            if close_pool:
+#                pool.close()
+#                pool.join()
+#    else:
+#        output = _serial_imap_or_istarmap(function, iterable, args, kwargs, map_or_starmap)
+#    return output
+

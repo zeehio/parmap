@@ -27,7 +27,7 @@ What does parmap offer?
 
 -  Provide an easy to use syntax for both ``map`` and ``starmap``.
 -  Parallelize transparently whenever possible.
--  Handle multiple arguments as needed.
+-  Handle multiple arguments.
 
 Installation:
 -------------
