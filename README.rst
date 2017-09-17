@@ -27,7 +27,7 @@ What does parmap offer?
 
 -  Provide an easy to use syntax for both ``map`` and ``starmap``.
 -  Parallelize transparently whenever possible.
--  Handle multiple (positional -for now-) arguments as needed.
+-  Handle multiple arguments as needed.
 
 Installation:
 -------------
@@ -47,14 +47,14 @@ parmap:
 
   import parmap
   # You want to do:
-  y = [myfunction(x, argument1, argument2) for x in mylist]
+  y = [myfunction(x, argument1, argument2, mykeyword=argument3) for x in mylist]
   # In parallel:
-  y = parmap.map(myfunction, mylist, argument1, argument2)
+  y = parmap.map(myfunction, mylist, argument1, argument2, mykeyword=argument3)
 
   # You want to do:
-  z = [myfunction(x, y, argument1, argument2) for (x,y) in mylist]
+  z = [myfunction(x, y, argument1, argument2, mykey=argument3) for (x,y) in mylist]
   # In parallel:
-  z = parmap.starmap(myfunction, mylist, argument1, argument2)
+  z = parmap.starmap(myfunction, mylist, argument1, argument2, mykey=argument3)
 
   # You want to do:
   listx = [1, 2, 3, 4, 5, 6]
@@ -66,6 +66,14 @@ parmap:
       listz.append(myfunction(x, y, param1, param2))
   # In parallel:
   listz = parmap.starmap(myfunction, zip(listx, listy), param1, param2)
+
+  # You want to do:
+  import os
+  dirs = ['dir1', 'dir2']
+  for dir in dirs:
+      os.makedirs(dir, exist_ok = True)
+  # In parallel:
+  parmap.map(os.makedirs, ['dir1', 'dir2'], exist_ok = True)
 
 
 map (and starmap on python 3.3) already exist. Why reinvent the wheel?
@@ -97,12 +105,14 @@ Additional features in parmap:
 -  ``parmap.map(..., ..., pool=multiprocessing.Pool())`` # use an existing
    pool, in this case parmap will not close the pool.
 
-To do:
+Limitations:
 ------
 
-Pull requests and suggestions are welcome.
-
--  Pass keyword arguments to functions?
+Both ``parmap.map()`` and ``parmap.starmap()`` (and their async versions) have arguments
+to control parallelization, the use of a pool, whether or not to show a progress bar, etc...
+In your functions, avoid using conflicting parmap keyword arguments. The list of conflicting
+arguments is: ``parallel``, ``chunksize``, ``pool``, ``processes``, ``callback``,
+``error_callback`` and any argument starting with ``parmap_``.
 
 Acknowledgments:
 ----------------

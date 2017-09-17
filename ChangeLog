@@ -1,5 +1,6 @@
 parmap (1.4.0.9000)
 
+  * Feature: Keyword arguments are allowed!
   * Feature: Add progress bar to parmap.starmap if tqdm is installed
   * Fix: parmap.starmap_async was not passing the callback properly
 

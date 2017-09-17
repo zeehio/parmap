@@ -10,12 +10,24 @@ def _identity(*x):
     return x
 
 
+def _fun_with_keywords(x, a = 0, b = 1):
+    return x + a + b
+
+
 class TestParmap(unittest.TestCase):
     def test_map(self):
         items = range(4)
         pfalse = parmap.map(_identity, items, parallel=False)
         ptrue = parmap.map(_identity, items, parallel=True)
         noparmap = list(map(_identity, items))
+        self.assertEqual(pfalse, ptrue)
+        self.assertEqual(pfalse, noparmap)
+
+    def test_map_kwargs(self):
+        items = range(4)
+        pfalse = parmap.map(_fun_with_keywords, items, parallel=False, a=10)
+        ptrue = parmap.map(_fun_with_keywords, items, parallel=True, a=10)
+        noparmap = [ x + 10 + 1 for x in items]
         self.assertEqual(pfalse, ptrue)
         self.assertEqual(pfalse, noparmap)
 
