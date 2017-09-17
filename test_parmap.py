@@ -35,7 +35,7 @@ class TestParmap(unittest.TestCase):
         self.assertEqual(pfalse, ptrue.get())
         self.assertEqual(pfalse, noparmap)
 
-    def test_map_async(self):
+    def test_map_async2(self):
         items = list(range(4))
         try:
             pool = multiprocessing.Pool(8)
@@ -67,19 +67,15 @@ class TestParmap(unittest.TestCase):
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
             parmap.map(range, [1, 2], processes=-3)
-            assert len(w) == 1
+            self.assertEqual(len(w), 1)
 
     def test_warn_wrong_argument_starmap(self):
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
             parmap.starmap(range, [(0, 2), (2, 5)], processes=-3)
-            assert len(w) == 1
+            self.assertEqual(len(w), 1)
 
 
 if __name__ == '__main__':
-    try:
-        import multiprocessing
-        multiprocessing.freeze_support()
-    except:
-        pass
+    multiprocessing.freeze_support()
     unittest.main()
