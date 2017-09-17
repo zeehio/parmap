@@ -155,6 +155,26 @@ def _get_default_chunksize(chunksize, pool, num_tasks):
             chunksize += 1
     return chunksize
 
+def _serial_map_or_starmap(function, iterable, args, map_or_starmap):
+    if map_or_starmap == "map":
+        output = [function(*([item] + list(args))) for item in iterable]
+    elif map_or_starmap == "starmap":
+        output = [function(*(list(item) + list(args))) for item in iterable]
+    else:
+        raise AssertionError("Internal parmap error: Invalid map_or_starmap. " +
+                             "This should not happen")
+    return output
+
+def _get_helper_func(map_or_starmap):
+    if map_or_starmap == "map":
+        func_star = _func_star_single
+    elif map_or_starmap == "starmap":
+        func_star = _func_star_many
+    else:
+        raise AssertionError("Internal parmap error: Invalid map_or_starmap. " +
+                             "This should not happen")
+    return func_star
+
 def _map_or_starmap(function, iterable, args, kwargs, map_or_starmap):
     """
     Shared function between parmap.map and parmap.starmap.
@@ -166,13 +186,7 @@ def _map_or_starmap(function, iterable, args, kwargs, map_or_starmap):
     parallel, pool, close_pool = _create_pool(kwargs)
     # Map:
     if parallel:
-        if map_or_starmap == "map":
-            func_star = _func_star_single
-        elif map_or_starmap == "starmap":
-            func_star = _func_star_many
-        else:
-            raise AssertionError("Internal parmap error: Invalid map_or_starmap. " +
-                                 "This should not happen")
+        func_star = _get_helper_func(map_or_starmap)
         try:
             if progress and close_pool:
                 try:
@@ -192,23 +206,18 @@ def _map_or_starmap(function, iterable, args, kwargs, map_or_starmap):
                 finally:
                     output = result.get()
             else:
-                output = pool.map(func_star,
+                result = pool.map_async(func_star,
                                   izip(repeat(function), iterable,
                                        repeat(list(args))),
                                   chunksize)
+                output = result.get()
         finally:
             if close_pool:
                 if not progress:
                     pool.close()
                 pool.join()
     else:
-        if map_or_starmap == "map":
-            output = [function(*([item] + list(args))) for item in iterable]
-        elif map_or_starmap == "starmap":
-            output = [function(*(list(item) + list(args))) for item in iterable]
-        else:
-            raise AssertionError("Internal parmap error: Invalid map_or_starmap. " +
-                                 "This should not happen")
+        output = _serial_map_or_starmap(function, iterable, args, map_or_starmap)
     return output
 
 
@@ -260,13 +269,7 @@ def _map_or_starmap_async(function, iterable, args, kwargs, map_or_starmap):
     parallel, pool, close_pool = _create_pool(kwargs)
     # Map:
     if parallel:
-        if map_or_starmap == "map":
-            func_star = _func_star_single
-        elif map_or_starmap == "starmap":
-            func_star = _func_star_many
-        else:
-            raise AssertionError("Internal parmap error: Invalid map_or_starmap. " +
-                                 "This should not happen")
+        func_star = _get_helper_func(map_or_starmap)
         try:
             if sys.version_info[0] == 2:  # python2 does not support error_callback
                 output = pool.map_async(func_star,
@@ -283,13 +286,7 @@ def _map_or_starmap_async(function, iterable, args, kwargs, map_or_starmap):
                 pool.close()
                 pool.join()
     else:
-        if map_or_starmap == "map":
-            output = [function(*([item] + list(args))) for item in iterable]
-        elif map_or_starmap == "starmap":
-            output = [function(*(list(item) + list(args))) for item in iterable]
-        else:
-            raise AssertionError("Internal parmap error: Invalid map_or_starmap. " +
-                                 "This should not happen")
+        output = _serial_map_or_starmap(function, iterable, args, map_or_starmap)
     return output
 
 def map_async(function, iterable, *args, **kwargs):
