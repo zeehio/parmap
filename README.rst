@@ -119,7 +119,7 @@ Both ``parmap.map()`` and ``parmap.starmap()`` (and their async versions) have t
 arguments (to control parallelization parameters, the use of a pool, show a progress bar, etc...).
 In your functions, avoid using keyword arguments with the same name. The list of conflicting
 arguments you should avoid in any function passed to parmap is: ``parallel``, ``chunksize``,
-``pool``, ``processes``, ``callback``, ``error_callback`` and any argument starting with ``parmap_``.
+``pool``, ``processes``, ``callback``, ``error_callback``, ``parmap_progress`` and any argument starting with ``pm_``.
 
 
 Acknowledgments:
