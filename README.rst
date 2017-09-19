@@ -45,18 +45,38 @@ Usage:
 Here are some examples with some unparallelized code parallelized with
 parmap:
 
+Simple parallelization example:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 ::
 
   import parmap
   # You want to do:
-  y = [myfunction(x, argument1, argument2, mykeyword=argument3) for x in mylist]
+  mylist = [1,2,3]
+  argument1 = 3.14
+  argument2 = True
+  y = [myfunction(x, argument1, mykeyword=argument2) for x in mylist]
   # In parallel:
-  y = parmap.map(myfunction, mylist, argument1, argument2, mykeyword=argument3)
+  y = parmap.map(myfunction, mylist, argument1, mykeyword=argument2)
+
+
+Show a progress bar:
+~~~~~~~~~~~~~~~~~~~~~
+
+Requires ``pip install tqdm``
+
+::
 
   # You want to do:
   y = [myfunction(x) for x in mylist]
   # In parallel, with a progress bar
-  y = parmap.map(myfunction, mylist, parmap_progress=True)
+  y = parmap.map(myfunction, mylist, pm_pbar=True)
+
+
+Passing multiple arguments:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
 
   # You want to do:
   z = [myfunction(x, y, argument1, argument2, mykey=argument3) for (x,y) in mylist]
@@ -74,20 +94,11 @@ parmap:
   # In parallel:
   listz = parmap.starmap(myfunction, zip(listx, listy), param1, param2)
 
-  # You want to do:
-  import os
-  dirs = ['dir1', 'dir2']
-  for dir in dirs:
-      os.makedirs(dir, exist_ok = True)
-  # In parallel:
-  parmap.map(os.makedirs, ['dir1', 'dir2'], exist_ok = True)
 
+map and starmap already exist. Why reinvent the wheel?
+---------------------------------------------------------
 
-map (and starmap on python 3.3) already exist. Why reinvent the wheel?
-----------------------------------------------------------------------
-
-Please correct me if I am wrong, but from my point of view, existing
-functions have some usability limitations:
+The existing functions have some usability limitations:
 
 -  The built-in python function ``map`` [#builtin-map]_
    is not able to parallelize.
@@ -106,29 +117,40 @@ Additional features in parmap:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 -  Create a pool for parallel computation automatically if possible.
--  ``parmap.map(..., ..., parallel=False)`` # disables parallelization
--  ``parmap.map(..., ..., chunksize=3)`` # size of chunks (see
-   multiprocessing.Pool().map)
--  ``parmap.map(..., ..., pool=multiprocessing.Pool())`` # use an existing
+-  ``parmap.map(..., ..., pm_parallel=False)`` # disables parallelization
+-  ``parmap.map(..., ..., pm_processes=4)`` # use 4 parallel processes
+-  ``parmap.map(..., ..., pm_pbar=True)`` # show a progress bar (requires tqdm)
+-  ``parmap.map(..., ..., pm_pool=multiprocessing.Pool())`` # use an existing
    pool, in this case parmap will not close the pool.
+-  ``parmap.map(..., ..., pm_chunksize=3)`` # size of chunks (see
+   multiprocessing.Pool().map)
 
 Limitations:
-------
+-------------
 
-Both ``parmap.map()`` and ``parmap.starmap()`` (and their async versions) have their own 
-arguments (to control parallelization parameters, the use of a pool, show a progress bar, etc...).
-In your functions, avoid using keyword arguments with the same name. The list of conflicting
-arguments you should avoid in any function passed to parmap is: ``parallel``, ``chunksize``,
-``pool``, ``processes``, ``callback``, ``error_callback``, ``parmap_progress`` and any argument starting with ``pm_``.
+``parmap.map()`` and ``parmap.starmap()`` (and their async versions) have their own 
+arguments (``pm_parallel``, ``pm_pbar``...). Those arguments are never passed
+to the underlying function. In the following example, ``myfun`` will receive 
+``myargument``, but not ``pm_parallel``. Do not write functions that require
+keyword arguments starting with ``pm_``, as ``parmap`` may need them in the future.
+
+::
+
+    parmap.map(myfun, mylist, pm_parallel=True, myargument=False)
+
+Additionally, there are other keyword arguments that should be avoided in the
+functions you write, because of parmap backwards compatibility reasons. The list
+of conflicting arguments is: ``parallel``, ``chunksize``, ``pool``,
+``processes``, ``callback``, ``error_callback`` and ``parmap_progress``.
+
 
 
 Acknowledgments:
 ----------------
 
-The original idea for this implementation was 
-`given <http://stackoverflow.com/a/5443941/446149>`_ by J.F. Sebastian. I just
-provided an alternative `answer <http://stackoverflow.com/a/21292849/446149>`_
-implementing it in a package.
+This package started after `this question <https://stackoverflow.com/q/5442910/446149>`_, 
+when I offered this `answer <http://stackoverflow.com/a/21292849/446149>`_, 
+taking the suggestions of J.F. Sebastian for his `answer <http://stackoverflow.com/a/5443941/446149>`_ 
 
 Known works using parmap
 ---------------------------
