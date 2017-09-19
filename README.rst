@@ -27,13 +27,15 @@ What does parmap offer?
 
 -  Provide an easy to use syntax for both ``map`` and ``starmap``.
 -  Parallelize transparently whenever possible.
--  Handle multiple arguments.
+-  Handle multiple arguments, even keyword arguments!
+-  Show a progress bar (requires `tqdm` as optional package)
 
 Installation:
 -------------
 
 ::
 
+  pip install tqdm # for progress bar support
   pip install parmap
 
 
@@ -50,6 +52,11 @@ parmap:
   y = [myfunction(x, argument1, argument2, mykeyword=argument3) for x in mylist]
   # In parallel:
   y = parmap.map(myfunction, mylist, argument1, argument2, mykeyword=argument3)
+
+  # You want to do:
+  y = [myfunction(x) for x in mylist]
+  # In parallel, with a progress bar
+  y = parmap.map(myfunction, mylist, parmap_progress=True)
 
   # You want to do:
   z = [myfunction(x, y, argument1, argument2, mykey=argument3) for (x,y) in mylist]
