@@ -83,6 +83,7 @@ except ImportError:  # Python 3 built-in zip already returns iterable
 
 from itertools import repeat
 import multiprocessing
+from multiprocessing.pool import AsyncResult
 
 try:
     import tqdm
@@ -311,6 +312,26 @@ def starmap(function, iterables, *args, **kwargs):
     return _map_or_starmap(function, iterables, args, kwargs, "starmap")
 
 
+class _DummyAsyncResult(AsyncResult):
+    """ AsyncResult compatible class, for when parallelization is disabled
+        It is a dummy class.
+    """
+    def __init__(self, values):
+        self._values = values
+
+    def get(self, timeout=None):
+        return self._values
+
+    def wait(self, timeout=None):
+        pass
+
+    def ready(self):
+        return True
+
+    def successful(self):
+        # The exception would have been raised in the computation of result
+        return True
+
 def _map_or_starmap_async(function, iterable, args, kwargs, map_or_starmap):
     """
     Shared function between parmap.map_async and parmap.starmap_async.
@@ -330,14 +351,14 @@ def _map_or_starmap_async(function, iterable, args, kwargs, map_or_starmap):
         func_star = _get_helper_func(map_or_starmap)
         try:
             if sys.version_info[0] == 2:  # does not support error_callback
-                output = pool.map_async(func_star,
+                result = pool.map_async(func_star,
                                         izip(repeat(function),
                                              iterable,
                                              repeat(list(args)),
                                              repeat(kwargs)),
                                         chunksize, callback)
             else:
-                output = pool.map_async(func_star,
+                result = pool.map_async(func_star,
                                         izip(repeat(function),
                                              iterable,
                                              repeat(list(args)),
@@ -348,9 +369,10 @@ def _map_or_starmap_async(function, iterable, args, kwargs, map_or_starmap):
                 pool.close()
                 pool.join()
     else:
-        output = _serial_map_or_starmap(function, iterable, args, kwargs,
+        values = _serial_map_or_starmap(function, iterable, args, kwargs,
                                         False, map_or_starmap)
-    return output
+        result = _DummyAsyncResult(values)
+    return result
 
 
 def map_async(function, iterable, *args, **kwargs):
@@ -359,7 +381,8 @@ def map_async(function, iterable, *args, **kwargs):
 
         >>> [function(x, args[0], args[1],...) for x in iterable]
 
-       :param pm_parallel: Force parallelization on/off
+       :param pm_parallel: Force parallelization on/off. If False, the
+                           function won't be asynchronous.
        :type pm_parallel: bool
        :param pm_chunksize: see  :py:class:`multiprocessing.pool.Pool`
        :type pm_chunksize: int
@@ -384,7 +407,8 @@ def starmap_async(function, iterables, *args, **kwargs):
             >>> return ([function(x1,x2,x3,..., args[0], args[1],...) for
             >>>         (x1,x2,x3...) in iterable])
 
-       :param pm_parallel: Force parallelization on/off
+       :param pm_parallel: Force parallelization on/off. If False, the
+                           function won't be asynchronous.
        :type pm_parallel: bool
        :param pm_chunksize: see  :py:class:`multiprocessing.pool.Pool`
        :type pm_chunksize: int

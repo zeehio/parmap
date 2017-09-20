@@ -11,6 +11,8 @@ parmap (1.4.0.9000)
   * Feature: Add progress bar to parmap.starmap if tqdm is installed
   * Feature: Add progress bar support when parallel=False as well.
   * Fix: parmap.starmap_async was not passing the callback properly
+  * Fix: parmap.map_async and parmap.starmap_async were not returning an
+    AsyncResult object when `parallel=False`.
 
  -- Sergio Oller <sergioller@gmail.com>  Sun, 17 Sep 2017 11:26:09 +0200
 

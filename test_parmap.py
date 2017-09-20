@@ -44,8 +44,8 @@ class TestParmap(unittest.TestCase):
         pfalse = parmap.map_async(_identity, items, pm_parallel=False)
         ptrue = parmap.map_async(_identity, items, pm_parallel=True)
         noparmap = list(map(_identity, items))
-        self.assertEqual(pfalse, ptrue.get())
-        self.assertEqual(pfalse, noparmap)
+        self.assertEqual(pfalse.get(), ptrue.get())
+        self.assertEqual(pfalse.get(), noparmap)
 
     def test_map_async2(self):
         items = list(range(4))
@@ -60,8 +60,8 @@ class TestParmap(unittest.TestCase):
             pool.close()
             pool.join()
         noparmap = list(map(_identity, items))
-        self.assertEqual(pfalse, ptrue.get())
-        self.assertEqual(pfalse, noparmap)
+        self.assertEqual(pfalse.get(), ptrue.get())
+        self.assertEqual(pfalse.get(), noparmap)
 
     def test_starmap(self):
         items = [(1, 2), (3, 4), (5, 6)]
@@ -73,7 +73,7 @@ class TestParmap(unittest.TestCase):
         items = [(1, 2), (3, 4), (5, 6)]
         pfalse = parmap.starmap_async(_identity, items, 5, 6, pm_parallel=False)
         ptrue = parmap.starmap_async(_identity, items, 5, 6, pm_parallel=True)
-        self.assertEqual(pfalse, ptrue.get())
+        self.assertEqual(pfalse.get(), ptrue.get())
 
     def test_warn_wrong_argument_map(self):
         with warnings.catch_warnings(record=True) as w:
