@@ -268,7 +268,7 @@ def _map_or_starmap(function, iterable, args, kwargs, map_or_starmap):
                     pool.close()
                 pool.join()
     else:
-        output = _serial_map_or_starmap(function, iterable, args, kwargs, 
+        output = _serial_map_or_starmap(function, iterable, args, kwargs,
                                         progress, map_or_starmap)
     return output
 
