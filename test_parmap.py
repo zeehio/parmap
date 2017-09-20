@@ -4,64 +4,128 @@ import parmap
 import time
 import multiprocessing
 
-def _identity(*x):
+# The fact that parallelization is happening is controlled via reasonable
+# guesses of the parmap overhead and the CPU speeds
+
+
+# Overhead of map_async, should be less than TIME_PER_TEST
+TIME_OVERHEAD = 0.1
+
+# The time each call takes to return in the _wait test
+TIME_PER_TEST = 0.2
+
+def _wait(x):
     """ Dummy function to not do anything"""
-    time.sleep(0.2)
+    time.sleep(TIME_PER_TEST)
     return x
 
+def _identity(*x):
+    return x
 
-def _fun_with_keywords(x, a = 0, b = 1):
+_DEFAULT_B = 1
+def _fun_with_keywords(x, a = 0, b = _DEFAULT_B):
     return x + a + b
 
 
 class TestParmap(unittest.TestCase):
-    def test_map(self):
-        items = range(4)
-        pfalse = parmap.map(_identity, items, pm_parallel=False)
-        ptrue = parmap.map(_identity, items, pm_parallel=True)
-        noparmap = list(map(_identity, items))
-        self.assertEqual(pfalse, ptrue)
-        self.assertEqual(pfalse, noparmap)
+    def test_map_without_parallel_timings(self):
+        NUM_TASKS = 6
+        items = range(NUM_TASKS)
+        mytime = time.time()
+        pfalse = parmap.map(_wait, items, pm_parallel=False)
+        elapsed = time.time() - mytime
+        self.assertTrue(elapsed >= TIME_PER_TEST*NUM_TASKS)
+        self.assertEqual(pfalse, list(range(NUM_TASKS)))
+
+    def test_map_with_parallel_timings(self):
+        NUM_TASKS = 6
+        items = range(NUM_TASKS)
+        mytime = time.time()
+        ptrue = parmap.map(_wait, items, pm_processes=NUM_TASKS,
+                           pm_parallel=True)
+        elapsed = time.time() - mytime
+        self.assertTrue(elapsed >= TIME_PER_TEST)
+        self.assertTrue(elapsed < TIME_PER_TEST*(NUM_TASKS-1))
+        self.assertEqual(ptrue, list(range(NUM_TASKS)))
 
     def test_map_kwargs(self):
-        items = range(4)
+        items = range(2)
         pfalse = parmap.map(_fun_with_keywords, items, pm_parallel=False, a=10)
         ptrue = parmap.map(_fun_with_keywords, items, pm_parallel=True, a=10)
-        noparmap = [ x + 10 + 1 for x in items]
+        noparmap = [ x + 10 + _DEFAULT_B for x in items]
         self.assertEqual(pfalse, ptrue)
         self.assertEqual(pfalse, noparmap)
 
     def test_map_progress(self):
-        items = range(10)
-        pfalse = parmap.map(_identity, items, pm_pbar=False)
-        ptrue = parmap.map(_identity, items, pm_pbar=True)
-        noparmap = list(map(_identity, items))
+        items = range(4)
+        pfalse = parmap.map(_wait, items, pm_pbar=False)
+        ptrue = parmap.map(_wait, items, pm_pbar=True)
+        noparmap = list(map(_wait, items))
         self.assertEqual(pfalse, ptrue)
         self.assertEqual(pfalse, noparmap)
 
-    def test_map_async(self):
-        items = range(4)
-        pfalse = parmap.map_async(_identity, items, pm_parallel=False)
-        ptrue = parmap.map_async(_identity, items, pm_parallel=True)
-        noparmap = list(map(_identity, items))
-        self.assertEqual(pfalse.get(), ptrue.get())
-        self.assertEqual(pfalse.get(), noparmap)
-
-    def test_map_async2(self):
+    def test_map_async_started_simultaneously_timings(self):
         items = list(range(4))
-        try:
-            pool = multiprocessing.Pool(8)
-            pfalse = parmap.map_async(_identity, items, pm_parallel=False, pm_pool=pool)
+        mytime0 = time.time()
+        # These are started in parallel:
+        with parmap.map_async(_wait, items, pm_processes=4) as compute1:
+            elapsed1 = time.time() - mytime0
             mytime = time.time()
-            ptrue = parmap.map_async(_identity, items, pm_parallel=True, pm_pool=pool)
-            mytime = time.time() - mytime
-            self.assertTrue(mytime < 0.2)
-        finally:
-            pool.close()
-            pool.join()
-        noparmap = list(map(_identity, items))
-        self.assertEqual(pfalse.get(), ptrue.get())
-        self.assertEqual(pfalse.get(), noparmap)
+            with parmap.map_async(_wait, items, pm_processes=4) as compute2:
+                elapsed2 = time.time() - mytime
+                mytime = time.time()
+                result1 = compute1.get()
+                elapsed3 = time.time() - mytime0
+                mytime = time.time()
+                result2 = compute2.get()
+                elapsed4 = time.time() - mytime0
+        self.assertTrue(elapsed1 < TIME_OVERHEAD)
+        self.assertTrue(elapsed2 < TIME_OVERHEAD)
+        self.assertTrue(elapsed3 < 4*TIME_PER_TEST+2*TIME_OVERHEAD)
+        self.assertTrue(elapsed4 < 4*TIME_PER_TEST+2*TIME_OVERHEAD)
+        self.assertEqual(result1, result2)
+        self.assertEqual(result1, items)
+
+    def test_map_async_noparallel_started_simultaneously_timings(self):
+        NTASKS = 4
+        items = list(range(NTASKS))
+        mytime = time.time()
+        # These are started in parallel:
+        with parmap.map_async(_wait, items, pm_parallel=False) as compute1:
+            elapsed1 = time.time() - mytime
+            mytime = time.time()
+            with parmap.map_async(_wait, items, pm_parallel=False) as compute2:
+                elapsed2 = time.time() - mytime
+                mytime = time.time()
+                result1 = compute1.get()
+                result2 = compute2.get()
+                finished = time.time() - mytime
+        self.assertTrue(elapsed1 >= NTASKS*TIME_PER_TEST)
+        self.assertTrue(elapsed2 >= NTASKS*TIME_PER_TEST)
+        self.assertTrue(finished <= 2*TIME_OVERHEAD)
+        self.assertEqual(result1, result2)
+        self.assertEqual(result1, items)
+
+
+    def test_map_async(self):
+        NUM_TASKS = 6
+        NCPU = 6
+        items = range(NUM_TASKS)
+        mytime = time.time()
+        pfalse = parmap.map_async(_wait, items, pm_parallel=False).get()
+        elapsed_false = time.time() - mytime
+        mytime = time.time()
+        with parmap.map_async(_wait, items, pm_processes=NCPU) as ptrue:
+            elap_true_async = time.time() - mytime
+            mytime = time.time()
+            ptrue_result = ptrue.get()
+            elap_true_get = time.time() - mytime
+        noparmap = list(items)
+        self.assertEqual(pfalse, ptrue_result)
+        self.assertEqual(pfalse, noparmap)
+        self.assertTrue(elapsed_false > TIME_PER_TEST*(NUM_TASKS-1))
+        self.assertTrue(elap_true_async < TIME_OVERHEAD)
+        self.assertTrue(elap_true_get < TIME_PER_TEST*(NUM_TASKS-1))
 
     def test_starmap(self):
         items = [(1, 2), (3, 4), (5, 6)]

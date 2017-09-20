@@ -95,6 +95,44 @@ Passing multiple arguments:
   listz = parmap.starmap(myfunction, zip(listx, listy), param1, param2)
 
 
+Advanced: Multiple parallel tasks running in parallel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In this example, Task1 uses 5 cores, while Task2 uses 3 cores. Both tasks start
+to compute simultaneously, and we print a message as soon as any of the tasks
+finishes, retreiving the result.
+
+::
+    import parmap
+    def task1(item):
+        return 2*item
+
+    def task2(item):
+        return 2*item + 1
+
+    items1 = range(500000)
+    items2 = range(500)
+
+    with parmap.map_async(task1, items1, pm_processes=5) as result1:
+        with parmap.map_async(task2, items2, pm_processes=3) as result2:
+            data_task1 = None
+            data_task2 = None
+            task1_working = True
+            task2_working = True
+            while task1_working or task2_working:
+                result1.wait(0.1)
+                if task1_working and result1.ready():
+                    print("Task 1 has finished!")
+                    data_task1 = result1.get()
+                    task1_working = False
+                result2.wait(0.1)
+                if task2_working and result2.ready():
+                    print("Task 2 has finished!")
+                    data_task2 = result2.get()
+                    task2_working = False
+    #Further work with data_task1 or data_task2
+
+
 map and starmap already exist. Why reinvent the wheel?
 ---------------------------------------------------------
 

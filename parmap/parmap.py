@@ -332,6 +332,57 @@ class _DummyAsyncResult(AsyncResult):
         # The exception would have been raised in the computation of result
         return True
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self ,type, value, traceback):
+        pass
+
+class _ParallelAsyncResult(AsyncResult):
+    """ Like the AsyncResult, but it will close the pool when we leave the
+        ``with`` block or when we check if it is ready.
+    """
+    def __init__(self, result, pool=None):
+        self._result = result
+        self._pool = pool
+
+    def get(self, timeout=None):
+        values = self._result.get(timeout)
+        if self.ready():
+            self.join()
+        return values
+
+    def wait(self, timeout=None):
+        return self._result.wait(timeout)
+
+    def ready(self):
+        is_ready = self._result.ready()
+        if is_ready:
+            self.join()
+        return is_ready
+
+    def successful(self):
+        return self._result.successful()
+
+    def __enter__(self):
+        return self
+
+    def join(self):
+        if self._pool is not None:
+            ret = self._pool.join()
+            self._pool = None
+            return ret
+
+    def terminate(self):
+        if self._pool is not None:
+            ret = self._pool.terminate()
+            self._pool = None
+            return ret
+
+    def __exit__(self ,type, value, traceback):
+        self.terminate()
+
+
 def _map_or_starmap_async(function, iterable, args, kwargs, map_or_starmap):
     """
     Shared function between parmap.map_async and parmap.starmap_async.
@@ -367,7 +418,9 @@ def _map_or_starmap_async(function, iterable, args, kwargs, map_or_starmap):
         finally:
             if close_pool:
                 pool.close()
-                pool.join()
+                result = _ParallelAsyncResult(result, pool)
+            else:
+                result = _ParallelAsyncResult(result)
     else:
         values = _serial_map_or_starmap(function, iterable, args, kwargs,
                                         False, map_or_starmap)
