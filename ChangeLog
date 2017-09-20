@@ -1,6 +1,6 @@
 parmap (1.4.0.9000)
 
-  * Feature: Keyword arguments are allowed!
+  * Feature: Extra arguments given as keyword=value are allowed!
   * Deprecation: The parmap arguments are now prefixed with pm_ to avoid
     conflicts with other keyword arguments passed to your functions. The
     arguments `parallel`, `chunksize`, `pool`, `processes`, `callback`,
@@ -9,6 +9,7 @@ parmap (1.4.0.9000)
     now `pm_pbar` and the other deprecated arguments now have `pm_` in front
     of them (e.g. `parallel` is now `pm_parallel`).
   * Feature: Add progress bar to parmap.starmap if tqdm is installed
+  * Feature: Add progress bar support when parallel=False as well.
   * Fix: parmap.starmap_async was not passing the callback properly
 
  -- Sergio Oller <sergioller@gmail.com>  Sun, 17 Sep 2017 11:26:09 +0200

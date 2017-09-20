@@ -162,7 +162,10 @@ def _get_default_chunksize(chunksize, pool, num_tasks):
     return chunksize
 
 
-def _serial_map_or_starmap(function, iterable, args, kwargs, map_or_starmap):
+def _serial_map_or_starmap(function, iterable, args, kwargs, progress,
+                           map_or_starmap):
+    if progress:
+        iterable = tqdm.tqdm(iterable)
     if map_or_starmap == "map":
         output = [function(*([item] + list(args)), **kwargs)
                   for item in iterable]
@@ -264,8 +267,8 @@ def _map_or_starmap(function, iterable, args, kwargs, map_or_starmap):
                     pool.close()
                 pool.join()
     else:
-        output = _serial_map_or_starmap(function, iterable, args,
-                                        kwargs, map_or_starmap)
+        output = _serial_map_or_starmap(function, iterable, args, kwargs, 
+                                        progress, map_or_starmap)
     return output
 
 
@@ -345,8 +348,8 @@ def _map_or_starmap_async(function, iterable, args, kwargs, map_or_starmap):
                 pool.close()
                 pool.join()
     else:
-        output = _serial_map_or_starmap(function, iterable, args,
-                                        kwargs, map_or_starmap)
+        output = _serial_map_or_starmap(function, iterable, args, kwargs,
+                                        False, map_or_starmap)
     return output
 
 
