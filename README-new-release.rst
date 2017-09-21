@@ -47,14 +47,14 @@ This is a list of things to do before a release:
 
 .. code:: bash
 
-    python3 setup.py sdist
     # pip3 install --user -U "pip>=1.4" "setuptools>=0.9" "wheel>=0.21" "twine"
+    python3 setup.py sdist
     python3 setup.py bdist_wheel
 
 - Check that there are no missing files in :code:`dist/parmap-x.y.z.tar.gz` and
   on :code:`dist/parmap-x.y.z-py2.py3-none-any.whl`.
 
-- Upload to pypi: :code:`twine  upload dist/*`
+- Upload to pypi: :code:`twine  upload dist/parmap-#.#.#*`
 
 - Upload to conda: Edit :code:`conda.recipe/meta.yaml`. Change both the `version` field and the
   source section. Use `conda-build conda.recipe` and upload to anaconda.
