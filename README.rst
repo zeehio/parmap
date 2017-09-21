@@ -187,15 +187,15 @@ of conflicting arguments is: ``parallel``, ``chunksize``, ``pool``,
 Acknowledgments:
 ----------------
 
-This package started after `this question <https://stackoverflow.com/q/5442910/446149>`_, 
-when I offered this `answer <http://stackoverflow.com/a/21292849/446149>`_, 
-taking the suggestions of J.F. Sebastian for his `answer <http://stackoverflow.com/a/5443941/446149>`_ 
+This package started after `this question <https://stackoverflow.com/q/5442910/446149>`__, 
+when I offered this `answer <http://stackoverflow.com/a/21292849/446149>`__, 
+taking the suggestions of J.F. Sebastian for his `answer <http://stackoverflow.com/a/5443941/446149>`__
 
 Known works using parmap
 ---------------------------
 
 - Davide Gerosa, Michael Kesden, "PRECESSION. Dynamics of spinning black-hole
-  binaries with python." `arXiv:1605.01067 <https://arxiv.org/abs/1605.01067>`_, 2016
+  binaries with python." `arXiv:1605.01067 <https://arxiv.org/abs/1605.01067>`__, 2016
 
 References
 -----------
