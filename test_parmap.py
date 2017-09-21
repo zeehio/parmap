@@ -9,10 +9,10 @@ import multiprocessing
 
 
 # Overhead of map_async, should be less than TIME_PER_TEST
-TIME_OVERHEAD = 0.1
+TIME_OVERHEAD = 0.25
 
 # The time each call takes to return in the _wait test
-TIME_PER_TEST = 0.2
+TIME_PER_TEST = 0.5
 
 def _wait(x):
     """ Dummy function to not do anything"""
