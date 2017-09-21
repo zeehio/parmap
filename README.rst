@@ -15,19 +15,16 @@ parmap
    :target: https://codeclimate.com/github/zeehio/parmap
    :alt: Code Climate
 
-.. image:: https://img.shields.io/pypi/dm/parmap.svg
-    :target: https://pypi.python.org/pypi/parmap
-    :alt: Pypi downloads per month
 
-This small python module implements two functions: ``map`` and
-``starmap``.
+This small python module implements four functions: ``map`` and
+``starmap``, and their async versions ``map_async`` and ``starmap_async``.
 
 What does parmap offer?
 -----------------------
 
 -  Provide an easy to use syntax for both ``map`` and ``starmap``.
 -  Parallelize transparently whenever possible.
--  Handle multiple arguments, even keyword arguments!
+-  Pass additional positional and keyword arguments to parallelized functions.
 -  Show a progress bar (requires `tqdm` as optional package)
 
 Installation:
