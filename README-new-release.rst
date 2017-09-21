@@ -26,6 +26,12 @@ This is a list of things to do before a release:
 
 - Review the ChangeLog file and add items if necessary.
 
+- Check that the restructured text is valid with
+
+.. code:: bash
+
+    python3 setup.py check --restructuredtext
+
 - Bump the version in :code:`setup.py` to a valid release version (without
   :code:`DEVELOPMENT`). Update the version and release in :code:`docs/conf.py`.
   Commit.
