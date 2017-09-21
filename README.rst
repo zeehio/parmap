@@ -103,6 +103,7 @@ to compute simultaneously, and we print a message as soon as any of the tasks
 finishes, retreiving the result.
 
 ::
+
     import parmap
     def task1(item):
         return 2*item
