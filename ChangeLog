@@ -1,3 +1,9 @@
+parmap (1.5.1)
+
+  * Fix: pypi was not formatting the rst file due to a syntax warning
+
+ -- Sergio Oller <sergioller@gmail.com>  Thu, 21 Sep 2017 12:40:09 +0200
+
 parmap (1.5.0)
 
   * Feature: Extra map or starmap arguments given as keyword=value are
