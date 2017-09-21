@@ -1,10 +1,10 @@
 package:
   name: parmap
-  version: !!str 1.4.0
+  version: !!str 1.5.0
 
 source:
-  fn: parmap-1.4.0.tar.gz
-  url: https://pypi.python.org/packages/6e/d2/400781417eaf123e5ff394ce428dc3e4175f6065b1f20ed5f6d6a3307210/parmap-1.4.0.tar.gz
+  fn: parmap-1.5.0.tar.gz
+  url: https://pypi.python.org/packages/df/54/b2d3241ce0ea6dbb211e5835bd5bed1c786b3f756e9d230a2c1ff5f57f30/parmap-1.5.0.tar.gz#md5=373163e995029556398201085fba67c5
 
 requirements:
   build:
