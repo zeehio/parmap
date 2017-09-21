@@ -18,7 +18,7 @@ setup(name='parmap',
       extras_require = {
           'progress_bar':  ["tqdm>=4.8.4"],
       },
-      test_suite = "test_parmap.py",
+      test_suite = "test_parmap",
       classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
@@ -32,6 +32,6 @@ setup(name='parmap',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.6'
       ],
 )
