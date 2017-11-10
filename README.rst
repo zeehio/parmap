@@ -200,6 +200,9 @@ Known works using parmap
     - Colorful Image Colorization `arXiv:1603.08511 <https://arxiv.org/abs/1603.08511>`__
     - Deep Feature Interpolation for Image Content Changes `arXiv:1611.05507 <https://arxiv.org/abs/1611.05507>`__
     - InfoGAN `arXiv:1606.03657 <https://arxiv.org/abs/1606.03657>`__
+- Geoscience Australia, `SIFRA, a System for Infrastructure Facility Resilience Analysis <https://github.com/GeoscienceAustralia/sifra>`__, 2017
+- André F. Rendeiro, Christian Schmidl, Jonathan C. Strefford, Renata Walewska, Zadie Davis, Matthias Farlik, David Oscier, Christoph Bock "Chromatin accessibility maps of chronic lymphocytic leukemia identify subtype-specific epigenome signatures and transcription regulatory networks" Nat. Commun. 7:11938 doi: 10.1038/ncomms11938 (2016). `Paper <https://doi.org/10.5281/zenodo.231352>`__, `Code <https://github.com/epigen/cll-chromatin>`__
+
 
 References
 -----------
