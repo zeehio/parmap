@@ -193,6 +193,13 @@ Known works using parmap
 
 - Davide Gerosa, Michael Kesden, "PRECESSION. Dynamics of spinning black-hole
   binaries with python." `arXiv:1605.01067 <https://arxiv.org/abs/1605.01067>`__, 2016
+- Thibault de Boissiere, `Implementation of Deep learning papers <https://github.com/tdeboissiere/DeepLearningImplementations>`__, 2017
+    - Wasserstein Generative Adversarial Networks `arXiv:1701.07875 <https://arxiv.org/abs/1701.07875>`__
+    - pix2pix `arXiv:1611.07004 <https://arxiv.org/abs/1611.07004>`__
+    - Improved Techniques for Training Generative Adversarial Networks `arXiv:1606.03498 <https://arxiv.org/abs/1606.03498>`__
+    - Colorful Image Colorization `arXiv:1603.08511 <https://arxiv.org/abs/1603.08511>`__
+    - Deep Feature Interpolation for Image Content Changes `arXiv:1611.05507 <https://arxiv.org/abs/1611.05507>`__
+    - InfoGAN `arXiv:1606.03657 <https://arxiv.org/abs/1606.03657>`__
 
 References
 -----------
