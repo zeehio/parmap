@@ -231,46 +231,49 @@ def _map_or_starmap(function, iterable, args, kwargs, map_or_starmap):
     progress = kwargs.pop("pm_pbar", False)
     progress = progress and HAVE_TQDM
     parallel, pool, close_pool = _create_pool(kwargs)
-    # Map:
-    if parallel:
-        func_star = _get_helper_func(map_or_starmap)
+    # Handle case: Execute sequentially:
+    if not parallel:
+        return _serial_map_or_starmap(function, iterable, args, kwargs,
+                                      progress, map_or_starmap)
+    func_star = _get_helper_func(map_or_starmap)
+    # Handle case: Without showinng progress bar
+    if not progress:
         try:
-            if progress and close_pool:
-                try:
-                    num_tasks = len(iterable)
-                    # get a chunksize (as multiprocessing does):
-                    chunksize = _get_default_chunksize(chunksize,
-                                                       pool, num_tasks)
-                    # use map_async to get progress information
-                    result = pool.map_async(func_star,
-                                            izip(repeat(function),
-                                                 iterable,
-                                                 repeat(list(args)),
-                                                 repeat(kwargs)),
-                                            chunksize)
-                finally:
-                    pool.close()
-                # Progress bar:
-                try:
-                    _do_pbar(result, num_tasks, chunksize)
-                finally:
-                    output = result.get()
-            else:
-                result = pool.map_async(func_star,
-                                        izip(repeat(function),
-                                             iterable,
-                                             repeat(list(args)),
-                                             repeat(kwargs)),
-                                        chunksize)
-                output = result.get()
+            result = pool.map_async(func_star,
+                                    izip(repeat(function),
+                                         iterable,
+                                         repeat(list(args)),
+                                         repeat(kwargs)),
+                                    chunksize)
+            output = result.get()
         finally:
             if close_pool:
-                if not progress:
-                    pool.close()
+                pool.close()
                 pool.join()
-    else:
-        output = _serial_map_or_starmap(function, iterable, args, kwargs,
-                                        progress, map_or_starmap)
+        return output
+    # Show progress bar:
+    try:
+        num_tasks = len(iterable)
+        # get a chunksize (as multiprocessing does):
+        chunksize = _get_default_chunksize(chunksize,
+                                           pool, num_tasks)
+        # use map_async to get progress information
+        result = pool.map_async(func_star,
+                                izip(repeat(function),
+                                     iterable,
+                                     repeat(list(args)),
+                                     repeat(kwargs)),
+                                chunksize)
+    finally:
+        if close_pool:
+            pool.close()
+    # Progress bar:
+    try:
+        _do_pbar(result, num_tasks, chunksize)
+    finally:
+        output = result.get()
+        if close_pool:
+            pool.join()
     return output
 
 

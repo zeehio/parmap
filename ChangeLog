@@ -1,3 +1,10 @@
+parmap (1.5.1.9000)
+
+  * Fix #21: Now it is possible to use pm_pbar with pm_pool. Thanks
+             to @CarloNicolini for the report.
+
+ -- Sergio Oller <sergioller@gmail.com>  Tue, 30 Apr 2019 16:27:33 +0200
+
 parmap (1.5.1)
 
   * Fix: pypi was not formatting the rst file due to a syntax warning
