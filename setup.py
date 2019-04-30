@@ -10,6 +10,7 @@ setup(name='parmap',
       description=('map and starmap implementations passing additional '
                    'arguments and parallelizing if possible'),
       long_description=long_description,
+      long_description_content_type = "text/x-rst",
       author='Sergio Oller',
       license='APACHE-2.0',
       author_email='sergioller@gmail.com',
