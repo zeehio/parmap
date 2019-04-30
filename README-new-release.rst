@@ -26,22 +26,9 @@ This is a list of things to do before a release:
 
 - Review the ChangeLog file and add items if necessary.
 
-- Check that the restructured text is valid with
-
-.. code:: bash
-
-    python3 setup.py check --restructuredtext
-
 - Bump the version in :code:`setup.py` to a valid release version (without
-  :code:`DEVELOPMENT`). Update the version and release in :code:`docs/conf.py`.
-  Commit.
-
-- Tag the release :code:`git tag v#.#.#`.
-
-- Push the release to :code:`origin` [#origin]_: :code:`git push origin --tags`.
-
-- Check that the testsuite [#travis]_ and the documentation [#readthedocs]_
-  are updated properly.
+  :code:`DEVELOPMENT`). Update the version and release in :code:`docs/conf.py` and in
+  the Changelog.
 
 - Build the source distribution and the binary wheel
 
@@ -54,7 +41,22 @@ This is a list of things to do before a release:
 - Check that there are no missing files in :code:`dist/parmap-x.y.z.tar.gz` and
   on :code:`dist/parmap-x.y.z-py2.py3-none-any.whl`.
 
-- Upload to pypi: :code:`twine  upload dist/parmap-#.#.#*`
+- Check that the restructured text is valid with
+
+.. code:: bash
+
+    twine check dist/parmap-[VERSION].tar.gz 
+
+- Commit.
+
+- Tag the release :code:`git tag v#.#.#`.
+
+- Push the release to :code:`origin` [#origin]_: :code:`git push origin --tags`.
+
+- Check that the testsuite [#travis]_ and the documentation [#readthedocs]_
+  are updated properly.
+
+- Upload to pypi: :code:`twine upload dist/parmap-#.#.#*`
 
 - Upload to conda: Edit :code:`conda.recipe/meta.yaml`. Change both the `version` field and the
   source section. Use `conda-build conda.recipe` and upload to anaconda.
