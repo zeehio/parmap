@@ -72,6 +72,7 @@ Members
 from __future__ import print_function
 from __future__ import unicode_literals
 from __future__ import division
+from functools import partial
 
 import warnings
 import sys
@@ -402,19 +403,15 @@ def _map_or_starmap_async(function, iterable, args, kwargs, map_or_starmap):
         func_star = _get_helper_func(map_or_starmap)
         try:
             if sys.version_info[0] == 2:  # does not support error_callback
-                result = pool.map_async(func_star,
-                                        izip(repeat(function),
-                                             iterable,
-                                             repeat(list(args)),
-                                             repeat(kwargs)),
-                                        chunksize, callback)
+                map_async = pool.map_async
             else:
-                result = pool.map_async(func_star,
-                                        izip(repeat(function),
-                                             iterable,
-                                             repeat(list(args)),
-                                             repeat(kwargs)),
-                                        chunksize, callback, error_callback)
+                map_async = partial(pool.map_async, error_callback = error_callback)
+            result = map_async(func_star, izip(repeat(function),
+                                               iterable,
+                                               repeat(list(args)),
+                                               repeat(kwargs)),
+                               chunksize = chunksize,
+                               callback = callback)
         finally:
             if close_pool:
                 pool.close()
