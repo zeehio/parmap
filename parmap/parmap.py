@@ -133,25 +133,25 @@ def _create_pool(kwargs):
     return parallel, pool, close_pool
 
 
-def _do_pbar(pool, num_tasks, chunksize, refresh_time=2):
+def _do_pbar(async_result, num_tasks, chunksize, refresh_time=2):
     remaining = num_tasks
     # tqdm provides a progress bar.
     # the pbar needs to be updated with the increment on each
     # iteration.
     with tqdm.tqdm(total=num_tasks) as pbar:
         while True:
-            if (pool.ready()):
+            if async_result.ready():
                 pbar.update(remaining)
                 break
             try:
-                remaining_now = pool._number_left*chunksize
+                remaining_now = async_result._number_left*chunksize
                 done_now = remaining - remaining_now
                 remaining = remaining_now
             except:
                 break
             if done_now > 0:
                 pbar.update(done_now)
-            pool.wait(refresh_time)  # update every two seconds
+            async_result.wait(refresh_time)  # update every two seconds
 
 
 def _get_default_chunksize(chunksize, pool, num_tasks):
