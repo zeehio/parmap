@@ -246,7 +246,11 @@ def _map_or_starmap(function, iterable, args, kwargs, map_or_starmap):
                                          repeat(kwargs)),
                                     chunksize)
             output = result.get()
-        finally:
+        except:
+            if close_pool:
+                pool.terminate()
+            raise
+        else:
             if close_pool:
                 pool.close()
                 pool.join()
@@ -264,7 +268,11 @@ def _map_or_starmap(function, iterable, args, kwargs, map_or_starmap):
                                      repeat(list(args)),
                                      repeat(kwargs)),
                                 chunksize)
-    finally:
+    except:
+        if close_pool:
+            pool.terminate()
+        raise
+    else:
         if close_pool:
             pool.close()
     # Progress bar:
@@ -415,7 +423,11 @@ def _map_or_starmap_async(function, iterable, args, kwargs, map_or_starmap):
                                                repeat(kwargs)),
                                chunksize = chunksize,
                                callback = callback)
-        finally:
+        except:
+            if close_pool:
+                pool.terminate()
+            raise
+        else:
             if close_pool:
                 pool.close()
                 result = _ParallelAsyncResult(result, pool)

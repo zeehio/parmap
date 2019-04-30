@@ -1,5 +1,7 @@
 parmap (1.5.1.9000)
 
+  * Fix #14: Workers should be stopped also when the kernel is interrupted
+             on a jupyter notebook. Thanks to @wjaskowski for the report.
   * Fix #21: Now it is possible to use pm_pbar with pm_pool. Thanks
              to @CarloNicolini for the report.
 
