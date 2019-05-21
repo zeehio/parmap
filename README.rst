@@ -4,6 +4,10 @@ parmap
 .. image:: https://travis-ci.org/zeehio/parmap.svg?branch=master
     :target: https://travis-ci.org/zeehio/parmap
 
+.. image:: https://img.shields.io/conda/vn/conda-forge/parmap.svg
+    :target: https://anaconda.org/conda-forge/parmap
+    :alt: conda-forge version
+
 .. image:: https://readthedocs.org/projects/parmap/badge/?version=latest
     :target: https://readthedocs.org/projects/parmap/?badge=latest
     :alt: Documentation Status
