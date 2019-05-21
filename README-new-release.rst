@@ -61,6 +61,8 @@ This is a list of things to do before a release:
 - Upload to conda-forge:
     * git clone https://github.com/zeehio/parmap-feedstock
     * cd parmap-feedstock
+    * git remote add conda-forge https://github.com/conda-forge/parmap-feedstock
+    * git pull conda-forge master
     * git checkout -b parmap-new-upstream-v#.#.#
     * Edit recipe/meta.yaml
         + Change the version at the top and the sha256 hash (from
