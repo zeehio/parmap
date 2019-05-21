@@ -1,15 +1,21 @@
 package:
   name: parmap
-  version: !!str 1.5.1
+  version: !!str 1.5.2
 
 source:
-  fn: parmap-1.5.1.tar.gz
-  url: https://pypi.python.org/packages/b7/ca/12da4e44931135d2b76e758adb3def95423c08d76b744cb10e6781c3603b/parmap-1.5.1.tar.gz#md5=1bbceeb5b9f0453c6ca48d4fd043dbdc
+  fn: parmap-1.5.2.tar.gz
+  url: https://files.pythonhosted.org/packages/c5/57/0fafe2d6a750ae94bc4d0191eb60002d16a1393fd343041c768eb54ceaf9/parmap-1.5.2.tar.gz
+  sha256: a15f33fa0e2a454f29aecfdd5a825c780b7d26d876eb6093476ddf5c47c8f9b9
+
+build:
+  noarch: python
+  script: "{{ PYTHON }} -m pip install . -vv"
+
 
 requirements:
-  build:
+  host:
     - python
-
+    - pip
   run:
     - python
     - tqdm # optional dependency
@@ -33,7 +39,7 @@ test:
 
 about:
   home: https://github.com/zeehio/parmap
-  license: Apache Software License
+  license: APACHE
 
 # See
 # http://docs.continuum.io/conda/build.html for
