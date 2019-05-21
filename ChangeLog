@@ -69,8 +69,10 @@ parmap (1.2.1)
          given as an argument.
 
  -- Sergio Oller <sergioller@gmail.com>  Fri, 16 May 2014 13:18:58 +0200
+
 parmap (1.2.0)
 
   * Initial release.
 
  -- Sergio Oller <sergioller@gmail.com>  Thu, 23 Jan 2014 12:47:46 +0100
+
