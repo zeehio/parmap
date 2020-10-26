@@ -2,7 +2,6 @@ language: python
 sudo: false
 python:
   - "2.7"
-  - "3.3"
   - "3.4"
   - "3.5"
   - "3.6"
@@ -15,6 +14,7 @@ python:
 env:
   - WITH_TQDM="YES"
   - WITH_TQDM="NO"
+  - COVERAGE_RCFILE=".coveragerc"
 before_install:
   - pip install coverage codecov
   - test "${WITH_TQDM}" = "YES" && pip install tqdm || echo "Test without tqdm"
