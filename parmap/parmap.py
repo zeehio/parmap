@@ -331,6 +331,10 @@ class _DummyAsyncResult(AsyncResult):
     def __init__(self, values):
         self._values = values
 
+    @property
+    def _number_left(self):
+        return 0
+
     def get(self, timeout=None):
         return self._values
 
@@ -357,6 +361,10 @@ class _ParallelAsyncResult(AsyncResult):
     def __init__(self, result, pool=None):
         self._result = result
         self._pool = pool
+
+    @property
+    def _number_left(self):
+        return self._result._number_left
 
     def get(self, timeout=None):
         values = self._result.get(timeout)
