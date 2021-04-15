@@ -1,3 +1,9 @@
+parmap (1.5.2.9000)
+
+  * Drop support for unsupported python versions
+
+ -- Sergio Oller <sergioller@gmail.com>  Thu, 15 Apr 2021 17:07:07 +0200
+
 parmap (1.5.2)
 
   * Fix #14: Workers should be stopped also when the kernel is interrupted

@@ -142,8 +142,6 @@ The existing functions have some usability limitations:
 
 -  The built-in python function ``map`` [#builtin-map]_
    is not able to parallelize.
--  ``multiprocessing.Pool().starmap`` [#multiproc-starmap]_
-   is only available in python-3.3 and later versions.
 -  ``multiprocessing.Pool().map`` [#multiproc-map]_
    does not allow any additional argument to the mapped function.
 -  ``multiprocessing.Pool().starmap`` allows passing multiple arguments,
