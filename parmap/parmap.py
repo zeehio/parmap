@@ -68,12 +68,11 @@ Members
 # The original idea for this implementation was given by J.F. Sebastian
 # at  http://stackoverflow.com/a/5443941/446149
 
-from functools import partial
+import multiprocessing
 import warnings
-import sys
+import typing as T
 
 from itertools import repeat
-import multiprocessing
 from multiprocessing.pool import AsyncResult
 
 try:
@@ -108,10 +107,10 @@ def _func_star_many(func_items_args):
 
 
 def _create_pool(kwargs):
-    parallel = kwargs.pop("pm_parallel", True)
-    pool = kwargs.pop("pm_pool", None)
+    parallel: bool = kwargs.pop("pm_parallel", True)
+    pool: T.Optional[multiprocessing.Pool] = kwargs.pop("pm_pool", None)
     close_pool = False
-    processes = kwargs.pop("pm_processes", None)
+    processes: T.Optional[int] = kwargs.pop("pm_processes", None)
     # Initialize pool if parallel:
     if parallel and pool is None:
         try:
@@ -341,7 +340,7 @@ class _DummyAsyncResult(AsyncResult):
     def __enter__(self):
         return self
 
-    def __exit__(self ,type, value, traceback):
+    def __exit__(self, type, value, traceback):
         pass
 
 class _ParallelAsyncResult(AsyncResult):
@@ -379,17 +378,15 @@ class _ParallelAsyncResult(AsyncResult):
 
     def join(self):
         if self._pool is not None:
-            ret = self._pool.join()
+            self._pool.join()
             self._pool = None
-            return ret
 
     def terminate(self):
         if self._pool is not None:
-            ret = self._pool.terminate()
+            self._pool.terminate()
             self._pool = None
-            return ret
 
-    def __exit__(self ,type, value, traceback):
+    def __exit__(self, type, value, traceback):
         self.terminate()
 
 
@@ -411,16 +408,17 @@ def _map_or_starmap_async(function, iterable, args, kwargs, map_or_starmap):
     if parallel:
         func_star = _get_helper_func(map_or_starmap)
         try:
-            if sys.version_info[0] == 2:  # does not support error_callback
-                map_async = pool.map_async
-            else:
-                map_async = partial(pool.map_async, error_callback = error_callback)
-            result = map_async(func_star, zip(repeat(function),
-                                              iterable,
-                                              repeat(list(args)),
-                                              repeat(kwargs)),
-                               chunksize = chunksize,
-                               callback = callback)
+            result = pool.map_async(
+                func_star,
+                zip(repeat(function),
+                    iterable,
+                    repeat(list(args)),
+                    repeat(kwargs)
+                ),
+                chunksize = chunksize,
+                callback = callback,
+                error_callback = error_callback
+            )
         except:
             if close_pool:
                 pool.terminate()
