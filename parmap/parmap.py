@@ -68,26 +68,16 @@ Members
 # The original idea for this implementation was given by J.F. Sebastian
 # at  http://stackoverflow.com/a/5443941/446149
 
-
-from __future__ import print_function
-from __future__ import unicode_literals
-from __future__ import division
 from functools import partial
-
 import warnings
 import sys
-
-try:
-    from itertools import izip
-except ImportError:  # Python 3 built-in zip already returns iterable
-    izip = zip
 
 from itertools import repeat
 import multiprocessing
 from multiprocessing.pool import AsyncResult
 
 try:
-    import tqdm
+    import tqdm # type: ignore
     HAVE_TQDM = True
 except ImportError:
     HAVE_TQDM = False
@@ -236,14 +226,14 @@ def _map_or_starmap(function, iterable, args, kwargs, map_or_starmap):
         return _serial_map_or_starmap(function, iterable, args, kwargs,
                                       progress, map_or_starmap)
     func_star = _get_helper_func(map_or_starmap)
-    # Handle case: Without showinng progress bar
+    # Handle case: Without showing progress bar
     if not progress:
         try:
             result = pool.map_async(func_star,
-                                    izip(repeat(function),
-                                         iterable,
-                                         repeat(list(args)),
-                                         repeat(kwargs)),
+                                    zip(repeat(function),
+                                        iterable,
+                                        repeat(list(args)),
+                                        repeat(kwargs)),
                                     chunksize)
             output = result.get()
         except:
@@ -263,10 +253,10 @@ def _map_or_starmap(function, iterable, args, kwargs, map_or_starmap):
                                            pool, num_tasks)
         # use map_async to get progress information
         result = pool.map_async(func_star,
-                                izip(repeat(function),
-                                     iterable,
-                                     repeat(list(args)),
-                                     repeat(kwargs)),
+                                zip(repeat(function),
+                                    iterable,
+                                    repeat(list(args)),
+                                    repeat(kwargs)),
                                 chunksize)
     except:
         if close_pool:
@@ -425,10 +415,10 @@ def _map_or_starmap_async(function, iterable, args, kwargs, map_or_starmap):
                 map_async = pool.map_async
             else:
                 map_async = partial(pool.map_async, error_callback = error_callback)
-            result = map_async(func_star, izip(repeat(function),
-                                               iterable,
-                                               repeat(list(args)),
-                                               repeat(kwargs)),
+            result = map_async(func_star, zip(repeat(function),
+                                              iterable,
+                                              repeat(list(args)),
+                                              repeat(kwargs)),
                                chunksize = chunksize,
                                callback = callback)
         except:
@@ -522,8 +512,8 @@ def starmap_async(function, iterables, *args, **kwargs):
 #        func_star = _get_helper_func("map")
 #        try:
 #            output = pool.imap(func_star,
-#                               izip(repeat(function), iterable,
-#                                    repeat(list(args)), repeat(kwargs)),
+#                               zip(repeat(function), iterable,
+#                                   repeat(list(args)), repeat(kwargs)),
 #                               chunksize)
 #        finally:
 #            if close_pool:
