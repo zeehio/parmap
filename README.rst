@@ -212,5 +212,5 @@ References
 .. [#builtin-map] http://docs.python.org/dev/library/functions.html#map
 .. [#multiproc-starmap] http://docs.python.org/dev/library/multiprocessing.html#multiprocessing.pool.Pool.starmap
 .. [#multiproc-map] http://docs.python.org/dev/library/multiprocessing.html#multiprocessing.pool.Pool.map
-.. [#itertools-repeat] http://docs.python.org/2/library/itertools.html#itertools.repeat
+.. [#itertools-repeat] http://docs.python.org/dev/library/itertools.html#itertools.repeat
 
