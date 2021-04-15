@@ -15,7 +15,10 @@ python =
     3.9: py39, mypy, coverage
 
 [testenv:coverage]
-deps = coverage
+deps =
+  coverage
+  tqdm
+
 commands = 
   coverage run --parallel-mode --concurrency=multiprocessing test_parmap.py
   coverage combine
