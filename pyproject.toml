@@ -5,17 +5,33 @@ build-backend = "setuptools.build_meta"
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py36, py37, py38, py39, mypy
+envlist = py36, py37, py38, py39, mypy, coverage
 
 [gh-actions]
 python =
     3.6: py36
     3.7: py37
-    3.8: py38, mypy
-    3.9: py39
+    3.8: py38
+    3.9: py39, mypy, coverage
+
+[testenv:coverage]
+deps = coverage
+commands = 
+  coverage run --parallel-mode --concurrency=multiprocessing test_parmap.py
+  coverage combine
+  coverage report
+  coverage xml
+
+[testenv:mypy]
+deps = 
+  mypy
+  tqdm
+commands = 
+  mypy -p parmap
 
 [testenv]
-deps = pytest               # PYPI package providing pytest
+deps = pytest
+
 commands = pytest {posargs} # substitute with tox' positional arguments
 """
 
