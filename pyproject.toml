@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py36, py37, py38, py39, mypy
+
+[gh-actions]
+python =
+    3.6: py36
+    3.7: py37
+    3.8: py38, mypy
+    3.9: py39
+
+[testenv]
+deps = pytest               # PYPI package providing pytest
+commands = pytest {posargs} # substitute with tox' positional arguments
+"""
+
