@@ -1,8 +1,8 @@
 parmap
 ======
 
-.. image:: https://travis-ci.org/zeehio/parmap.svg?branch=master
-    :target: https://travis-ci.org/zeehio/parmap
+.. image:: https://github.com/zeehio/parmap/actions/workflows/test.yml/badge.svg
+    :target: https://github.com/zeehio/parmap/actions/workflows/test.yml
 
 .. image:: https://img.shields.io/conda/vn/conda-forge/parmap.svg
     :target: https://anaconda.org/conda-forge/parmap
