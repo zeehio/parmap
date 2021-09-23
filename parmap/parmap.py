@@ -76,7 +76,7 @@ from itertools import repeat
 from multiprocessing.pool import AsyncResult
 
 try:
-    import tqdm # type: ignore
+    import tqdm.auto as tqdm # type: ignore
     HAVE_TQDM = True
 except ImportError:
     HAVE_TQDM = False
