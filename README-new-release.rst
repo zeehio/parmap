@@ -26,7 +26,7 @@ This is a list of things to do before a release:
 
 - Review the ChangeLog file and add items if necessary.
 
-- Bump the version in :code:`setup.py` to a valid release version (without
+- Bump the version in :code:`setup.cfg` to a valid release version (without
   :code:`DEVELOPMENT`). Update the version and release in :code:`docs/conf.py` and in
   the Changelog.
 
@@ -35,8 +35,7 @@ This is a list of things to do before a release:
 .. code:: bash
 
     # pip3 install --user -U "pip>=1.4" "setuptools>=0.9" "wheel>=0.21" "twine"
-    python3 setup.py sdist
-    python3 setup.py bdist_wheel
+    python3 setup.py sdist bdist_wheel
 
 - Check that there are no missing files in :code:`dist/parmap-x.y.z.tar.gz` and
   on :code:`dist/parmap-x.y.z-py2.py3-none-any.whl`.
