@@ -52,7 +52,7 @@ This is a list of things to do before a release:
 
 - Push the release to :code:`origin` [#origin]_: :code:`git push origin --tags`.
 
-- Check that the testsuite [#travis]_ and the documentation [#readthedocs]_
+- Check that the testsuite [#gh-actions]_ and the documentation [#readthedocs]_
   are updated properly.
 
 - Upload to pypi: :code:`twine upload dist/parmap-#.#.#*`
@@ -74,7 +74,7 @@ This is a list of things to do before a release:
   to anaconda. NOTE: On the next update, if the upload to conda-forge works, stop doing
   this step and delete the conda-recipe directory.
 
-- Bump the version in :code:`setup.py` to a valid development version 
+- Bump the version in :code:`setup.cfg` to a valid development version 
   (appending :code:`.9000`). Update the version and release in
   :code:`docs/conf.py`. Commit and push.
 
@@ -84,6 +84,6 @@ References
 .. [#rpackages-release] http://r-pkgs.had.co.nz/release.html
 .. [#semver] http://semver.org
 .. [#origin] https://github.com/zeehio/parmap
-.. [#travis] https://travis-ci.org/zeehio/parmap
+.. [#gh-actions] https://github.com/zeehio/parmap/actions
 .. [#readthedocs] https://parmap.readthedocs.org/
 
