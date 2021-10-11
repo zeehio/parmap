@@ -58,7 +58,7 @@ This is a list of things to do before a release:
 - Upload to pypi: :code:`twine upload dist/parmap-#.#.#*`
 
 - Upload to conda-forge:
-    * git clone https://github.com/zeehio/parmap-feedstock
+    * git clone git@github.com:zeehio/parmap-feedstock.git
     * cd parmap-feedstock
     * git remote add conda-forge https://github.com/conda-forge/parmap-feedstock
     * git pull conda-forge master
@@ -67,12 +67,9 @@ This is a list of things to do before a release:
         + Change the version at the top and the sha256 hash (from
           https://pypi.org/project/parmap/#files)
     * git commit, git push
-    * Visit https://github.com/conda-forge/parmap-feedstock and create a PR
-
-- Upload to conda (deprecated): Edit :code:`conda.recipe/meta.yaml`. Change both the
-  `version` field and the source section. Use `conda-build conda.recipe` and upload
-  to anaconda. NOTE: On the next update, if the upload to conda-forge works, stop doing
-  this step and delete the conda-recipe directory.
+    * Visit https://github.com/conda-forge/parmap-feedstock and create a PR. Follow all
+      checks and rules and merge it.
+    * Wait for conda continuous integration to finish. Check that the new parmap is at https://anaconda.org/conda-forge/parmap/files
 
 - Bump the version in :code:`setup.cfg` to a valid development version 
   (appending :code:`.9000`). Update the version and release in
