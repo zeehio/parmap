@@ -55,7 +55,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'parmap'
-copyright = u'2017, Sergio Oller'
+copyright = u'2017-2021, Sergio Oller'
 author = u'Sergio Oller'
 
 # The version info for the project you're documenting, acts as replacement for

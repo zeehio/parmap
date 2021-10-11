@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#   Copyright 2014 Sergio Oller <sergioller@gmail.com>
+#   Copyright 2014-2021 Sergio Oller <sergioller@gmail.com>
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
