@@ -1,8 +1,11 @@
-parmap (1.5.2.9000)
+parmap (1.5.3)
 
   * Drop support for unsupported python versions
+  * Add support for python 3.10
+  * Use tqdm.auto to have nice progress bars on jupyter notebooks (#26)
+  * Add dummy _number_left for parallel async (#23)
 
- -- Sergio Oller <sergioller@gmail.com>  Thu, 15 Apr 2021 17:07:07 +0200
+ -- Sergio Oller <sergioller@gmail.com>  Mon, 11 Oct 2021 11:09:32 +0200
 
 parmap (1.5.2)
 
