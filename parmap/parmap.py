@@ -122,12 +122,12 @@ def _create_pool(kwargs):
     return parallel, pool, close_pool
 
 
-def _do_pbar(async_result, num_tasks, chunksize, refresh_time=2):
+def _do_pbar(async_result, num_tasks, chunksize, refresh_time=2, tqdm_options={}):
     remaining = num_tasks
     # tqdm provides a progress bar.
     # the pbar needs to be updated with the increment on each
     # iteration.
-    with tqdm.tqdm(total=num_tasks) as pbar:
+    with tqdm.tqdm(total=num_tasks, **tqdm_options) as pbar:
         while True:
             if async_result.ready():
                 pbar.update(remaining)
@@ -156,7 +156,8 @@ def _get_default_chunksize(chunksize, pool, num_tasks):
 def _serial_map_or_starmap(function, iterable, args, kwargs, progress,
                            map_or_starmap):
     if progress:
-        iterable = tqdm.tqdm(iterable)
+        tqdm_options = progress if isinstance(progress, dict) else {}
+        iterable = tqdm.tqdm(iterable, **tqdm_options)
     if map_or_starmap == "map":
         output = [function(*([item] + list(args)), **kwargs)
                   for item in iterable]
@@ -218,7 +219,7 @@ def _map_or_starmap(function, iterable, args, kwargs, map_or_starmap):
     kwargs = _deprecated_kwargs(kwargs, arg_newarg)
     chunksize = kwargs.pop("pm_chunksize", None)
     progress = kwargs.pop("pm_pbar", False)
-    progress = progress and HAVE_TQDM
+    progress = progress if HAVE_TQDM else False
     parallel, pool, close_pool = _create_pool(kwargs)
     # Handle case: Execute sequentially:
     if not parallel:
@@ -266,7 +267,8 @@ def _map_or_starmap(function, iterable, args, kwargs, map_or_starmap):
             pool.close()
     # Progress bar:
     try:
-        _do_pbar(result, num_tasks, chunksize)
+        tqdm_options = progress if isinstance(progress, dict) else {}
+        _do_pbar(result, num_tasks, chunksize, tqdm_options=tqdm_options)
     finally:
         output = result.get()
         if close_pool:
