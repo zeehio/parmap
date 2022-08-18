@@ -289,8 +289,8 @@ def map(function, iterable, *args, **kwargs):
        :param pm_processes: Number of processes to use in the pool. See
          :py:class:`multiprocessing.pool.Pool`
        :type pm_processes: int
-       :param pm_pbar: Show progress bar
-       :type pm_pbar: bool
+       :param pm_pbar: Show progress bar with optional information
+       :type pm_pbar: bool or dict
     """
     return _map_or_starmap(function, iterable, args, kwargs, "map")
 
@@ -309,8 +309,8 @@ def starmap(function, iterables, *args, **kwargs):
        :param pm_processes: Number of processes to use in the pool. See
                          :py:class:`multiprocessing.pool.Pool`
        :type pm_processes: int
-       :param pm_pbar: Show progress bar
-       :type pm_pbar: bool
+       :param pm_pbar: Show progress bar with optional information
+       :type pm_pbar: bool or dict
     """
     return _map_or_starmap(function, iterables, args, kwargs, "starmap")
 
