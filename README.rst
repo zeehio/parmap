@@ -72,6 +72,8 @@ Requires ``pip install tqdm``
   y = [myfunction(x) for x in mylist]
   # In parallel, with a progress bar
   y = parmap.map(myfunction, mylist, pm_pbar=True)
+  # Passing extra options to the tqdm progress bar
+  y = parmap.map(myfunction, mylist, pm_pbar={"desc": "Example"})
 
 
 Passing multiple arguments:
