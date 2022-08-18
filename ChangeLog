@@ -1,3 +1,10 @@
+parmap (1.6.0)
+  * Drop support for unsupported python versions (3.6)
+  * Let pm_pbar be a dictionary (besides a bool) with additional tqdm
+    options (@kaparoo, #28).
+
+ -- Sergio Oller <sergioller@gmail.com>  Thu, 18 Aug 2022 08:23:36 +0200
+
 parmap (1.5.3)
 
   * Drop support for unsupported python versions
