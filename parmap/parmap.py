@@ -155,7 +155,7 @@ def _get_default_chunksize(chunksize, pool, num_tasks):
 
 def _serial_map_or_starmap(function, iterable, args, kwargs, progress,
                            map_or_starmap):
-    if progress:
+    if progress or isinstance(progress, dict):
         tqdm_options = progress if isinstance(progress, dict) else {}
         iterable = tqdm.tqdm(iterable, **tqdm_options)
     if map_or_starmap == "map":
