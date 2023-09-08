@@ -1,3 +1,14 @@
+parmap (unreleased)
+
+  [Maintenance]
+
+   * Schedule CI every 3 months, to verify everything is in order even when there is no activity in the project
+   * Test python versions 3.8-3.11
+   * Remove conda-recipe from this repo, since it's been on conda-forge for a while now
+   * Replace setuptools with hatchling
+
+ -- Sergio Oller <sergioller@gmail.com>  Fri, 08 Sep 2023 06:46:02 +0200
+
 parmap (1.6.0)
   * Drop support for unsupported python versions (3.6)
   * Let pm_pbar be a dictionary (besides a bool) with additional tqdm

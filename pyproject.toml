@@ -1,6 +1,48 @@
+[project]
+name = "parmap"
+version = "1.6.0"
+authors = [
+  { name="Sergio Oller", email="sergioller@gmail.com" },
+]
+description = "map and starmap implementations passing additional arguments and parallelizing if possible"
+license = "Apache-2.0"
+readme = "README.rst"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/zeehio/parmap"
+"Bug Tracker" = "https://github.com/zeehio/parmap/issues"
+
+[project.optional-dependencies]
+progress_bar = ["tqdm>=4.8.4"]
+
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build]
+ignore-vcs = true
+include = [
+  "parmap",
+  "*.txt",
+  "README.rst",
+  "ChangeLog",
+  "docs/*.rst",
+  "docs/conf.py",
+  "docs/Makefile",
+  "docs/make.bat",
+]
 
 [tool.tox]
 legacy_tox_ini = """
