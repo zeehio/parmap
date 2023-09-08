@@ -12,8 +12,8 @@ parmap
     :target: https://readthedocs.org/projects/parmap/?badge=latest
     :alt: Documentation Status
 
-.. image:: https://codecov.io/github/zeehio/parmap/coverage.svg?branch=master
-    :target: https://codecov.io/github/zeehio/parmap?branch=master
+.. image:: https://codecov.io/github/zeehio/parmap/coverage.svg?branch=main
+    :target: https://codecov.io/github/zeehio/parmap?branch=main
 
 .. image:: https://codeclimate.com/github/zeehio/parmap/badges/gpa.svg
    :target: https://codeclimate.com/github/zeehio/parmap
