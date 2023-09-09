@@ -61,7 +61,7 @@ This is a list of things to do before a release:
     * git clone git@github.com:zeehio/parmap-feedstock.git
     * cd parmap-feedstock
     * git remote add conda-forge https://github.com/conda-forge/parmap-feedstock
-    * git pull conda-forge master
+    * git pull conda-forge main
     * git checkout -b parmap-new-upstream-v#.#.#
     * Edit recipe/meta.yaml
         + Change the version at the top and the sha256 hash (from
@@ -71,7 +71,7 @@ This is a list of things to do before a release:
       checks and rules and merge it.
     * Wait for conda continuous integration to finish. Check that the new parmap is at https://anaconda.org/conda-forge/parmap/files
 
-- Bump the version in :code:`setup.cfg` to a valid development version 
+- Bump the version in :code:`pyproject.toml` to a valid development version 
   (appending :code:`.9000`). Update the version and release in
   :code:`docs/conf.py`. Commit and push.
 
