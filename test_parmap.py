@@ -1,8 +1,9 @@
+import multiprocessing
+import time
 import unittest
 import warnings
+
 import parmap
-import time
-import multiprocessing
 
 # The fact that parallelization is happening is controlled via reasonable
 # guesses of the parmap overhead and the CPU speeds

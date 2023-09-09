@@ -69,9 +69,8 @@ Members
 # at  http://stackoverflow.com/a/5443941/446149
 
 import multiprocessing
-import warnings
 import typing as T
-
+import warnings
 from itertools import repeat
 from multiprocessing.pool import AsyncResult
 
