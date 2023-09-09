@@ -15,16 +15,21 @@ TIME_OVERHEAD = 0.4
 # The time each call takes to return in the _wait test
 TIME_PER_TEST = 0.8
 
+
 def _wait(x):
-    """ Dummy function to not do anything"""
+    """Dummy function to not do anything"""
     time.sleep(TIME_PER_TEST)
     return x
+
 
 def _identity(*x):
     return x
 
+
 _DEFAULT_B = 1
-def _fun_with_keywords(x, a = 0, b = _DEFAULT_B):
+
+
+def _fun_with_keywords(x, a=0, b=_DEFAULT_B):
     return x + a + b
 
 
@@ -53,25 +58,24 @@ class TestParmap(unittest.TestCase):
         mytime = time.time()
         pfalse = parmap.map(_wait, items, pm_parallel=False)
         elapsed = time.time() - mytime
-        self.assertTrue(elapsed >= TIME_PER_TEST*NUM_TASKS)
+        self.assertTrue(elapsed >= TIME_PER_TEST * NUM_TASKS)
         self.assertEqual(pfalse, list(range(NUM_TASKS)))
 
     def test_map_with_parallel_timings(self):
         NUM_TASKS = 6
         items = range(NUM_TASKS)
         mytime = time.time()
-        ptrue = parmap.map(_wait, items, pm_processes=NUM_TASKS,
-                           pm_parallel=True)
+        ptrue = parmap.map(_wait, items, pm_processes=NUM_TASKS, pm_parallel=True)
         elapsed = time.time() - mytime
         self.assertTrue(elapsed >= TIME_PER_TEST)
-        self.assertTrue(elapsed < TIME_PER_TEST*(NUM_TASKS-1))
+        self.assertTrue(elapsed < TIME_PER_TEST * (NUM_TASKS - 1))
         self.assertEqual(ptrue, list(range(NUM_TASKS)))
 
     def test_map_kwargs(self):
         items = range(2)
         pfalse = parmap.map(_fun_with_keywords, items, pm_parallel=False, a=10)
         ptrue = parmap.map(_fun_with_keywords, items, pm_parallel=True, a=10)
-        noparmap = [ x + 10 + _DEFAULT_B for x in items]
+        noparmap = [x + 10 + _DEFAULT_B for x in items]
         self.assertEqual(pfalse, ptrue)
         self.assertEqual(pfalse, noparmap)
 
@@ -116,8 +120,8 @@ class TestParmap(unittest.TestCase):
                 elapsed4 = time.time() - mytime0
         self.assertTrue(elapsed1 < TIME_OVERHEAD)
         self.assertTrue(elapsed2 < TIME_OVERHEAD)
-        self.assertTrue(elapsed3 < 4*TIME_PER_TEST+2*TIME_OVERHEAD)
-        self.assertTrue(elapsed4 < 4*TIME_PER_TEST+2*TIME_OVERHEAD)
+        self.assertTrue(elapsed3 < 4 * TIME_PER_TEST + 2 * TIME_OVERHEAD)
+        self.assertTrue(elapsed4 < 4 * TIME_PER_TEST + 2 * TIME_OVERHEAD)
         self.assertEqual(result1, result2)
         self.assertEqual(result1, items)
 
@@ -135,12 +139,11 @@ class TestParmap(unittest.TestCase):
                 result1 = compute1.get()
                 result2 = compute2.get()
                 finished = time.time() - mytime
-        self.assertTrue(elapsed1 >= NTASKS*TIME_PER_TEST)
-        self.assertTrue(elapsed2 >= NTASKS*TIME_PER_TEST)
-        self.assertTrue(finished <= 2*TIME_OVERHEAD)
+        self.assertTrue(elapsed1 >= NTASKS * TIME_PER_TEST)
+        self.assertTrue(elapsed2 >= NTASKS * TIME_PER_TEST)
+        self.assertTrue(finished <= 2 * TIME_OVERHEAD)
         self.assertEqual(result1, result2)
         self.assertEqual(result1, items)
-
 
     def test_map_async(self):
         NUM_TASKS = 6
@@ -158,9 +161,9 @@ class TestParmap(unittest.TestCase):
         noparmap = list(items)
         self.assertEqual(pfalse, ptrue_result)
         self.assertEqual(pfalse, noparmap)
-        self.assertTrue(elapsed_false > TIME_PER_TEST*(NUM_TASKS-1))
+        self.assertTrue(elapsed_false > TIME_PER_TEST * (NUM_TASKS - 1))
         self.assertTrue(elap_true_async < TIME_OVERHEAD)
-        self.assertTrue(elap_true_get < TIME_PER_TEST*(NUM_TASKS-1))
+        self.assertTrue(elap_true_get < TIME_PER_TEST * (NUM_TASKS - 1))
 
     def test_starmap(self):
         items = [(1, 2), (3, 4), (5, 6)]
@@ -180,6 +183,7 @@ class TestParmap(unittest.TestCase):
             parmap.map(range, [1, 2], pm_processes=-3)
             self.assertTrue(len(w) > 0)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     multiprocessing.freeze_support()
     unittest.main()
