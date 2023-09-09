@@ -325,8 +325,8 @@ def map(function, iterable, *args, **kwargs):
            If you want to pass additional options to your callable, consider using :py:func:`functools.partial`::
 
              from functools import partial
-             import tqdm
-             pm_pbar = partial(tqdm.tqdm, desc = "example")
+             from tqdm_loggable.auto import tqdm
+             parmap.map(print, range(10), pm_pbar = partial(tqdm, desc = "example"))
 
     :type pm_pbar: bool, dict or callable
     """
@@ -355,9 +355,8 @@ def starmap(function, iterables, *args, **kwargs):
            If you want to pass additional options to your callable, consider using :py:func:`functools.partial`::
 
              from functools import partial
-             import tqdm
-             import tqdm
-             pm_pbar = partial(tqdm.tqdm, desc = "example")
+             from tqdm_loggable.auto import tqdm
+             parmap.map(print, range(10), pm_pbar = partial(tqdm, desc = "example"))
 
     :type pm_pbar: bool, dict or callable
     """
