@@ -1,6 +1,6 @@
 [project]
 name = "parmap"
-version = "1.7.0"
+version = "1.7.0.9000"
 authors = [
   { name="Sergio Oller", email="sergioller@gmail.com" },
 ]
