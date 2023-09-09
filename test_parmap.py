@@ -28,6 +28,24 @@ def _fun_with_keywords(x, a = 0, b = _DEFAULT_B):
     return x + a + b
 
 
+class ProgrBar:
+    def __init__(self, **kwargs):
+        self.expected = "S" + "T" * kwargs["total"] + "E"
+        self.content = ""
+
+    def __enter__(self):
+        self.content += "S"
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        self.content += "E"
+        if self.content != self.expected:
+            raise ValueError(f"Expected {self.expected}, found {self.content}")
+
+    def update(self, n=1):
+        self.content += "T" * n
+
+
 class TestParmap(unittest.TestCase):
     def test_map_without_parallel_timings(self):
         NUM_TASKS = 6
@@ -57,10 +75,26 @@ class TestParmap(unittest.TestCase):
         self.assertEqual(pfalse, ptrue)
         self.assertEqual(pfalse, noparmap)
 
-    def test_map_progress(self):
+    def test_map_pbar_true(self):
         items = range(4)
         pfalse = parmap.map(_wait, items, pm_pbar=False)
         ptrue = parmap.map(_wait, items, pm_pbar=True)
+        noparmap = list(map(_wait, items))
+        self.assertEqual(pfalse, ptrue)
+        self.assertEqual(pfalse, noparmap)
+
+    def test_map_pbar_dict(self):
+        items = range(4)
+        pfalse = parmap.map(_wait, items, pm_pbar=False)
+        ptrue = parmap.map(_wait, items, pm_pbar={"desc": "prefix"})
+        noparmap = list(map(_wait, items))
+        self.assertEqual(pfalse, ptrue)
+        self.assertEqual(pfalse, noparmap)
+
+    def test_map_pbar_callable(self):
+        items = range(4)
+        pfalse = parmap.map(_wait, items, pm_pbar=False)
+        ptrue = parmap.map(_wait, items, pm_pbar=ProgrBar)
         noparmap = list(map(_wait, items))
         self.assertEqual(pfalse, ptrue)
         self.assertEqual(pfalse, noparmap)
