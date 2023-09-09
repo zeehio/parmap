@@ -76,7 +76,8 @@ from itertools import repeat
 from multiprocessing.pool import AsyncResult
 
 try:
-    import tqdm.auto as tqdm # type: ignore
+    import tqdm.auto as tqdm  # type: ignore
+
     HAVE_TQDM = True
 except ImportError:
     HAVE_TQDM = False
@@ -84,26 +85,28 @@ except ImportError:
 
 def _func_star_single(func_item_args):
     """Equivalent to:
-       func = func_item_args[0]
-       item = func_item_args[1]
-       args = func_item_args[2]
-       kwargs = func_item_args[3]
-       return func(item,args[0],args[1],..., **kwargs)
+    func = func_item_args[0]
+    item = func_item_args[1]
+    args = func_item_args[2]
+    kwargs = func_item_args[3]
+    return func(item,args[0],args[1],..., **kwargs)
     """
-    return func_item_args[0](*[func_item_args[1]] + func_item_args[2],
-                             **func_item_args[3])
+    return func_item_args[0](
+        *[func_item_args[1]] + func_item_args[2], **func_item_args[3]
+    )
 
 
 def _func_star_many(func_items_args):
     """Equivalent to:
-       func = func_item_args[0]
-       items = func_item_args[1]
-       args = func_item_args[2:]
-       kwargs = func_item_args[3]
-       return func(items[0], items[1], ..., args[0], args[1], ..., **kwargs)
+    func = func_item_args[0]
+    items = func_item_args[1]
+    args = func_item_args[2:]
+    kwargs = func_item_args[3]
+    return func(items[0], items[1], ..., args[0], args[1], ..., **kwargs)
     """
-    return func_items_args[0](*list(func_items_args[1]) + func_items_args[2],
-                              **func_items_args[3])
+    return func_items_args[0](
+        *list(func_items_args[1]) + func_items_args[2], **func_items_args[3]
+    )
 
 
 def _create_pool(kwargs):
@@ -133,7 +136,7 @@ def _do_pbar(async_result, num_tasks, chunksize, refresh_time, pbar_wrapper):
                 pbar.update(remaining)
                 break
             try:
-                remaining_now = async_result._number_left*chunksize
+                remaining_now = async_result._number_left * chunksize
                 done_now = remaining - remaining_now
                 remaining = remaining_now
             except:
@@ -174,14 +177,13 @@ def _serial_map_or_starmap(
     if pbar_wrapper is not None:
         iterable = pbar_wrapper(iterable)
     if map_or_starmap == "map":
-        output = [function(*([item] + list(args)), **kwargs)
-                  for item in iterable]
+        output = [function(*([item] + list(args)), **kwargs) for item in iterable]
     elif map_or_starmap == "starmap":
-        output = [function(*(list(item) + list(args)), **kwargs)
-                  for item in iterable]
+        output = [function(*(list(item) + list(args)), **kwargs) for item in iterable]
     else:
-        raise AssertionError("Internal parmap error: Invalid map_or_starmap." +
-                             " This should not happen")
+        raise AssertionError(
+            "Internal parmap error: Invalid map_or_starmap." + " This should not happen"
+        )
     return output
 
 
@@ -191,16 +193,17 @@ def _get_helper_func(map_or_starmap):
     elif map_or_starmap == "starmap":
         func_star = _func_star_many
     else:
-        raise AssertionError("Internal parmap error: Invalid map_or_starmap." +
-                             " This should not happen")
+        raise AssertionError(
+            "Internal parmap error: Invalid map_or_starmap." + " This should not happen"
+        )
     return func_star
 
 
 def _deprecated_kwargs(kwargs, arg_newarg):
-    """ arg_newarg is a list of tuples, where each tuple has a pair of strings.
-        ('old_arg', 'new_arg')
-        A DeprecationWarning is raised for the arguments that need to be
-        replaced.
+    """arg_newarg is a list of tuples, where each tuple has a pair of strings.
+    ('old_arg', 'new_arg')
+    A DeprecationWarning is raised for the arguments that need to be
+    replaced.
     """
     warn_for = []
     for (arg, new_kw) in arg_newarg:
@@ -210,16 +213,23 @@ def _deprecated_kwargs(kwargs, arg_newarg):
             warn_for.append((arg, new_kw))
     if len(warn_for) > 0:
         if len(warn_for) == 1:
-            warnings.warn("Argument '{}' is deprecated. Use {} instead".
-                          format(warn_for[0][0], warn_for[0][1]),
-                          DeprecationWarning, stacklevel=4)
+            warnings.warn(
+                "Argument '{}' is deprecated. Use {} instead".format(
+                    warn_for[0][0], warn_for[0][1]
+                ),
+                DeprecationWarning,
+                stacklevel=4,
+            )
         else:
             args = ", ".join([x[0] for x in warn_for])
             repl = ", ".join([x[1] for x in warn_for])
             warnings.warn(
-                "Arguments '{}' are deprecated. Use '{}' instead respectively".
-                format(args, repl),
-                DeprecationWarning, stacklevel=4)
+                "Arguments '{}' are deprecated. Use '{}' instead respectively".format(
+                    args, repl
+                ),
+                DeprecationWarning,
+                stacklevel=4,
+            )
     return kwargs
 
 
@@ -228,9 +238,13 @@ def _map_or_starmap(function, iterable, args, kwargs, map_or_starmap):
     Shared function between parmap.map and parmap.starmap.
     Refer to those functions for details.
     """
-    arg_newarg = (("parallel", "pm_parallel"), ("chunksize", "pm_chunksize"),
-                  ("pool", "pm_pool"), ("processes", "pm_processes"),
-                  ("parmap_progress", "pm_pbar"))
+    arg_newarg = (
+        ("parallel", "pm_parallel"),
+        ("chunksize", "pm_chunksize"),
+        ("pool", "pm_pool"),
+        ("processes", "pm_processes"),
+        ("parmap_progress", "pm_pbar"),
+    )
     kwargs = _deprecated_kwargs(kwargs, arg_newarg)
     chunksize = kwargs.pop("pm_chunksize", None)
     progress = kwargs.pop("pm_pbar", False)
@@ -245,12 +259,11 @@ def _map_or_starmap(function, iterable, args, kwargs, map_or_starmap):
     # Handle case: Without showing progress bar
     if not has_pbar:
         try:
-            result = pool.map_async(func_star,
-                                    zip(repeat(function),
-                                        iterable,
-                                        repeat(list(args)),
-                                        repeat(kwargs)),
-                                    chunksize)
+            result = pool.map_async(
+                func_star,
+                zip(repeat(function), iterable, repeat(list(args)), repeat(kwargs)),
+                chunksize,
+            )
             output = result.get()
         except:
             if close_pool:
@@ -261,19 +274,17 @@ def _map_or_starmap(function, iterable, args, kwargs, map_or_starmap):
                 pool.close()
                 pool.join()
         return output
-    # Show progress bar:
+    # Handle case: Show progress bar:
     try:
         num_tasks = len(iterable)
         # get a chunksize (as multiprocessing does):
-        chunksize = _get_default_chunksize(chunksize,
-                                           pool, num_tasks)
+        chunksize = _get_default_chunksize(chunksize, pool, num_tasks)
         # use map_async to get progress information
-        result = pool.map_async(func_star,
-                                zip(repeat(function),
-                                    iterable,
-                                    repeat(list(args)),
-                                    repeat(kwargs)),
-                                chunksize)
+        result = pool.map_async(
+            func_star,
+            zip(repeat(function), iterable, repeat(list(args)), repeat(kwargs)),
+            chunksize,
+        )
     except:
         if close_pool:
             pool.terminate()
@@ -295,49 +306,69 @@ def _map_or_starmap(function, iterable, args, kwargs, map_or_starmap):
 
 def map(function, iterable, *args, **kwargs):
     """This function is equivalent to:
-        >>> [function(x, args[0], args[1],...) for x in iterable]
+     >>> [function(x, args[0], args[1],...) for x in iterable]
 
-       :param pm_parallel: Force parallelization on/off
-       :type pm_parallel: bool
-       :param pm_chunksize: see  :py:class:`multiprocessing.pool.Pool`
-       :type pm_chunksize: int
-       :param pm_pool: Pass an existing pool
-       :type pm_pool: multiprocessing.pool.Pool
-       :param pm_processes: Number of processes to use in the pool. See
-         :py:class:`multiprocessing.pool.Pool`
-       :type pm_processes: int
-       :param pm_pbar: Show progress bar with optional information. If it
-         is a dictionary, these are options passed to tqdm.
-       :type pm_pbar: bool or dict
+    :param pm_parallel: Force parallelization on/off
+    :type pm_parallel: bool
+    :param pm_chunksize: see  :py:class:`multiprocessing.pool.Pool`
+    :type pm_chunksize: int
+    :param pm_pool: Pass an existing pool
+    :type pm_pool: multiprocessing.pool.Pool
+    :param pm_processes: Number of processes to use in the pool. See
+      :py:class:`multiprocessing.pool.Pool`
+    :type pm_processes: int
+    :param pm_pbar: Show progress bar with optional information.
+
+         * If it is a `boolean`, whether to show or not the progress bar.
+         * If it is a `dictionary`, these are options passed to `tqdm.tqdm()`.
+         * If it is a `callable`, the callable is a function compatible with `tqdm.tqdm()`.
+           If you want to pass additional options to your callable, consider using :py:func:`functools.partial`::
+
+             from functools import partial
+             import tqdm
+             pm_pbar = partial(tqdm.tqdm, desc = "example")
+
+    :type pm_pbar: bool, dict or callable
     """
     return _map_or_starmap(function, iterable, args, kwargs, "map")
 
 
 def starmap(function, iterables, *args, **kwargs):
-    """ Equivalent to:
-            >>> return ([function(x1,x2,x3,..., args[0], args[1],...) for
-            >>>         (x1,x2,x3...) in iterable])
+    """Equivalent to:
+         >>> return ([function(x1,x2,x3,..., args[0], args[1],...) for
+         >>>         (x1,x2,x3...) in iterable])
 
-       :param pm_parallel: Force parallelization on/off
-       :type pm_parallel: bool
-       :param pm_chunksize: see  :py:class:`multiprocessing.pool.Pool`
-       :type pm_chunksize: int
-       :param pm_pool: Pass an existing pool
-       :type pm_pool: multiprocessing.pool.Pool
-       :param pm_processes: Number of processes to use in the pool. See
-                         :py:class:`multiprocessing.pool.Pool`
-       :type pm_processes: int
-       :param pm_pbar: Show progress bar with optional information. If it
-         is a dictionary, these are options passed to tqdm.
-       :type pm_pbar: bool or dict
+    :param pm_parallel: Force parallelization on/off
+    :type pm_parallel: bool
+    :param pm_chunksize: see  :py:class:`multiprocessing.pool.Pool`
+    :type pm_chunksize: int
+    :param pm_pool: Pass an existing pool
+    :type pm_pool: multiprocessing.pool.Pool
+    :param pm_processes: Number of processes to use in the pool. See
+                      :py:class:`multiprocessing.pool.Pool`
+    :type pm_processes: int
+    :param pm_pbar: Show progress bar with optional information.
+
+         * If it is a `boolean`, whether to show or not the progress bar.
+         * If it is a `dictionary`, these are options passed to `tqdm.tqdm()`.
+         * If it is a `callable`, the callable is a function compatible with `tqdm.tqdm()`.
+           If you want to pass additional options to your callable, consider using :py:func:`functools.partial`::
+
+             from functools import partial
+             import tqdm
+             import tqdm
+             pm_pbar = partial(tqdm.tqdm, desc = "example")
+
+    :type pm_pbar: bool, dict or callable
     """
     return _map_or_starmap(function, iterables, args, kwargs, "starmap")
 
 
 class _DummyAsyncResult(AsyncResult):
-    """ AsyncResult compatible class, for when parallelization is disabled
-        It is a dummy class.
+    """AsyncResult compatible class, for when parallelization is disabled
+    It is a dummy class.
     """
+
     def __init__(self, values):
         self._values = values
 
@@ -364,10 +395,12 @@ class _DummyAsyncResult(AsyncResult):
     def __exit__(self, type, value, traceback):
         pass
 
+
 class _ParallelAsyncResult(AsyncResult):
-    """ Like the AsyncResult, but it will close the pool when we leave the
-        ``with`` block or when we check if it is ready.
+    """Like the AsyncResult, but it will close the pool when we leave the
+    ``with`` block or when we check if it is ready.
     """
+
     def __init__(self, result, pool=None):
         self._result = result
         self._pool = pool
@@ -416,10 +449,14 @@ def _map_or_starmap_async(function, iterable, args, kwargs, map_or_starmap):
     Shared function between parmap.map_async and parmap.starmap_async.
     Refer to those functions for details.
     """
-    arg_newarg = (("parallel", "pm_parallel"), ("chunksize", "pm_chunksize"),
-                  ("pool", "pm_pool"), ("processes", "pm_processes"),
-                  ("callback", "pm_callback"),
-                  ("error_callback", "pm_error_callback"))
+    arg_newarg = (
+        ("parallel", "pm_parallel"),
+        ("chunksize", "pm_chunksize"),
+        ("pool", "pm_pool"),
+        ("processes", "pm_processes"),
+        ("callback", "pm_callback"),
+        ("error_callback", "pm_error_callback"),
+    )
     kwargs = _deprecated_kwargs(kwargs, arg_newarg)
     chunksize = kwargs.pop("pm_chunksize", None)
     callback = kwargs.pop("pm_callback", None)
@@ -431,14 +468,10 @@ def _map_or_starmap_async(function, iterable, args, kwargs, map_or_starmap):
         try:
             result = pool.map_async(
                 func_star,
-                zip(repeat(function),
-                    iterable,
-                    repeat(list(args)),
-                    repeat(kwargs)
-                ),
-                chunksize = chunksize,
-                callback = callback,
-                error_callback = error_callback
+                zip(repeat(function), iterable, repeat(list(args)), repeat(kwargs)),
+                chunksize=chunksize,
+                callback=callback,
+                error_callback=error_callback,
             )
         except:
             if close_pool:
@@ -451,58 +484,59 @@ def _map_or_starmap_async(function, iterable, args, kwargs, map_or_starmap):
             else:
                 result = _ParallelAsyncResult(result)
     else:
-        values = _serial_map_or_starmap(function, iterable, args, kwargs,
-                                        False, map_or_starmap)
+        values = _serial_map_or_starmap(
+            function, iterable, args, kwargs, None, map_or_starmap
+        )
         result = _DummyAsyncResult(values)
     return result
 
 
 def map_async(function, iterable, *args, **kwargs):
     """This function is the multiprocessing.Pool.map_async version that
-       supports multiple arguments.
+    supports multiple arguments.
 
-        >>> [function(x, args[0], args[1],...) for x in iterable]
+     >>> [function(x, args[0], args[1],...) for x in iterable]
 
-       :param pm_parallel: Force parallelization on/off. If False, the
-                           function won't be asynchronous.
-       :type pm_parallel: bool
-       :param pm_chunksize: see  :py:class:`multiprocessing.pool.Pool`
-       :type pm_chunksize: int
-       :param pm_callback: see  :py:class:`multiprocessing.pool.Pool`
-       :type pm_callback: function
-       :param pm_error_callback: (not on python 2) see
-           :py:class:`multiprocessing.pool.Pool`
-       :type pm_error_callback: function
-       :param pm_pool: Pass an existing pool.
-       :type pm_pool: multiprocessing.pool.Pool
-       :param pm_processes: Number of processes to use in the pool. See
-         :py:class:`multiprocessing.pool.Pool`
-       :type pm_processes: int
+    :param pm_parallel: Force parallelization on/off. If False, the
+                        function won't be asynchronous.
+    :type pm_parallel: bool
+    :param pm_chunksize: see  :py:class:`multiprocessing.pool.Pool`
+    :type pm_chunksize: int
+    :param pm_callback: see  :py:class:`multiprocessing.pool.Pool`
+    :type pm_callback: function
+    :param pm_error_callback: (not on python 2) see
+        :py:class:`multiprocessing.pool.Pool`
+    :type pm_error_callback: function
+    :param pm_pool: Pass an existing pool.
+    :type pm_pool: multiprocessing.pool.Pool
+    :param pm_processes: Number of processes to use in the pool. See
+      :py:class:`multiprocessing.pool.Pool`
+    :type pm_processes: int
     """
     return _map_or_starmap_async(function, iterable, args, kwargs, "map")
 
 
 def starmap_async(function, iterables, *args, **kwargs):
     """This function is the multiprocessing.Pool.starmap_async version that
-       supports multiple arguments.
+    supports multiple arguments.
 
-            >>> return ([function(x1,x2,x3,..., args[0], args[1],...) for
-            >>>         (x1,x2,x3...) in iterable])
+         >>> return ([function(x1,x2,x3,..., args[0], args[1],...) for
+         >>>         (x1,x2,x3...) in iterable])
 
-       :param pm_parallel: Force parallelization on/off. If False, the
-                           function won't be asynchronous.
-       :type pm_parallel: bool
-       :param pm_chunksize: see  :py:class:`multiprocessing.pool.Pool`
-       :type pm_chunksize: int
-       :param pm_callback: see  :py:class:`multiprocessing.pool.Pool`
-       :type pm_callback: function
-       :param pm_error_callback: see  :py:class:`multiprocessing.pool.Pool`
-       :type pm_error_callback: function
-       :param pm_pool: Pass an existing pool.
-       :type pm_pool: multiprocessing.pool.Pool
-       :param pm_processes: Number of processes to use in the pool. See
-         :py:class:`multiprocessing.pool.Pool`
-       :type pm_processes: int
+    :param pm_parallel: Force parallelization on/off. If False, the
+                        function won't be asynchronous.
+    :type pm_parallel: bool
+    :param pm_chunksize: see  :py:class:`multiprocessing.pool.Pool`
+    :type pm_chunksize: int
+    :param pm_callback: see  :py:class:`multiprocessing.pool.Pool`
+    :type pm_callback: function
+    :param pm_error_callback: see  :py:class:`multiprocessing.pool.Pool`
+    :type pm_error_callback: function
+    :param pm_pool: Pass an existing pool.
+    :type pm_pool: multiprocessing.pool.Pool
+    :param pm_processes: Number of processes to use in the pool. See
+      :py:class:`multiprocessing.pool.Pool`
+    :type pm_processes: int
     """
     return _map_or_starmap_async(function, iterables, args, kwargs, "starmap")
 
