@@ -71,6 +71,7 @@ Members
 import multiprocessing
 import typing as T
 import warnings
+from functools import partial
 from itertools import repeat
 from multiprocessing.pool import AsyncResult
 
