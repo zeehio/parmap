@@ -1,5 +1,9 @@
 parmap (unreleased)
 
+  [Enhancement]
+
+  * `pm_pbar` accepts now a `callable` as well, which should be a `tqdm.tqdm` compatible function (Closes #30).
+
   [Maintenance]
 
    * Schedule CI every 3 months, to verify everything is in order even when there is no activity in the project
