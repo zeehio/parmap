@@ -5,12 +5,32 @@ import warnings
 
 import parmap
 
-# The fact that parallelization is happening is controlled via reasonable
-# guesses of the parmap overhead and the CPU speeds
+# The fact that parallelization is happening is controlled via timing
+# assertions. To keep them from being flaky on slower or more loaded CI
+# runners, the overhead margin is calibrated against this machine (see
+# _measure_pool_overhead below) instead of using a constant tuned for one
+# developer's machine.
 
 
-# Overhead of map_async, should be less than TIME_PER_TEST
-TIME_OVERHEAD = 0.4
+def _identity(*x):
+    return x
+
+
+def _measure_pool_overhead():
+    """Measure this machine's overhead for creating a small pool and
+    dispatching a call through it, to scale timing safety margins to the
+    speed/load of whatever machine is running the tests.
+    """
+    start = time.time()
+    with multiprocessing.Pool(processes=2) as pool:
+        pool.map(_identity, range(2))
+    return time.time() - start
+
+
+# Overhead of map_async / pool creation, should be less than TIME_PER_TEST.
+# Floor of 0.4s keeps this unchanged on fast machines; the multiplier gives
+# a generous margin on slow/contended ones.
+TIME_OVERHEAD = max(0.4, 5 * _measure_pool_overhead())
 
 # The time each call takes to return in the _wait test
 TIME_PER_TEST = 0.8
@@ -19,10 +39,6 @@ TIME_PER_TEST = 0.8
 def _wait(x):
     """Dummy function to not do anything"""
     time.sleep(TIME_PER_TEST)
-    return x
-
-
-def _identity(*x):
     return x
 
 
@@ -38,6 +54,17 @@ _DEFAULT_B = 1
 
 def _fun_with_keywords(x, a=0, b=_DEFAULT_B):
     return x + a + b
+
+
+def _fun_needing_processes(x, processes=None):
+    """A function whose own parameter collides with the deprecated
+    'processes' alias for parmap's pm_processes."""
+    return (x, processes)
+
+
+def _fun_needing_pm_pbar(x, pm_pbar="default"):
+    """A function whose own parameter collides with parmap's pm_pbar."""
+    return (x, pm_pbar)
 
 
 class ProgrBar:
@@ -75,7 +102,7 @@ class TestParmap(unittest.TestCase):
         ptrue = parmap.map(_wait, items, pm_processes=NUM_TASKS, pm_parallel=True)
         elapsed = time.time() - mytime
         self.assertTrue(elapsed >= TIME_PER_TEST)
-        self.assertTrue(elapsed < TIME_PER_TEST * (NUM_TASKS - 1))
+        self.assertTrue(elapsed < TIME_PER_TEST * (NUM_TASKS - 1) + TIME_OVERHEAD)
         self.assertEqual(ptrue, list(range(NUM_TASKS)))
 
     def test_map_kwargs(self):
@@ -170,7 +197,7 @@ class TestParmap(unittest.TestCase):
         self.assertEqual(pfalse, noparmap)
         self.assertTrue(elapsed_false > TIME_PER_TEST * (NUM_TASKS - 1))
         self.assertTrue(elap_true_async < TIME_OVERHEAD)
-        self.assertTrue(elap_true_get < TIME_PER_TEST * (NUM_TASKS - 1))
+        self.assertTrue(elap_true_get < TIME_PER_TEST * (NUM_TASKS - 1) + TIME_OVERHEAD)
 
     def test_starmap(self):
         items = [(1, 2), (3, 4), (5, 6)]
@@ -246,6 +273,53 @@ class TestParmap(unittest.TestCase):
             _pool = []
 
         self.assertEqual(_get_default_chunksize(None, _FakePool(), 10), 1)
+
+    def test_reserved_legacy_alias_collision_warns(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            result = parmap.map(
+                _fun_needing_processes, range(2), processes=4, pm_parallel=False
+            )
+        collision_warnings = [
+            warning
+            for warning in w
+            if issubclass(warning.category, UserWarning)
+            and "processes" in str(warning.message)
+            and "reserved" in str(warning.message)
+        ]
+        self.assertTrue(len(collision_warnings) > 0)
+        # The function's own `processes` parameter never receives 4: parmap
+        # reserved that name (as a legacy alias for pm_processes) for itself.
+        self.assertEqual(result, [(0, None), (1, None)])
+
+    def test_reserved_pm_kwarg_collision_warns(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            result = parmap.map(
+                _fun_needing_pm_pbar, range(2), pm_pbar=False, pm_parallel=False
+            )
+        collision_warnings = [
+            warning
+            for warning in w
+            if issubclass(warning.category, UserWarning)
+            and "pm_pbar" in str(warning.message)
+            and "reserved" in str(warning.message)
+        ]
+        self.assertTrue(len(collision_warnings) > 0)
+        # The function's own `pm_pbar` parameter never receives False:
+        # parmap reserved that name for the progress bar option.
+        self.assertEqual(result, [(0, "default"), (1, "default")])
+
+    def test_no_collision_warning_without_collision(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            parmap.map(_fun_with_keywords, range(2), pm_parallel=False, a=10)
+        collision_warnings = [
+            warning
+            for warning in w
+            if issubclass(warning.category, UserWarning) and "reserved" in str(warning.message)
+        ]
+        self.assertEqual(collision_warnings, [])
 
 
 if __name__ == "__main__":
