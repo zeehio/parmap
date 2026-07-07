@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#   Copyright 2014-2022 Sergio Oller <sergioller@gmail.com>
+#   Copyright 2014-2026 Sergio Oller <sergioller@gmail.com>
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -89,7 +89,7 @@ def _func_star_single(func_item_args):
     item = func_item_args[1]
     args = func_item_args[2]
     kwargs = func_item_args[3]
-    return func(item,args[0],args[1],..., **kwargs)
+    return func(item, args[0], args[1], ..., **kwargs)
     """
     return func_item_args[0](
         *[func_item_args[1]] + func_item_args[2], **func_item_args[3]
@@ -98,10 +98,10 @@ def _func_star_single(func_item_args):
 
 def _func_star_many(func_items_args):
     """Equivalent to:
-    func = func_item_args[0]
-    items = func_item_args[1]
-    args = func_item_args[2:]
-    kwargs = func_item_args[3]
+    func = func_items_args[0]
+    items = func_items_args[1]
+    args = func_items_args[2]
+    kwargs = func_items_args[3]
     return func(items[0], items[1], ..., args[0], args[1], ..., **kwargs)
     """
     return func_items_args[0](
@@ -139,7 +139,9 @@ def _do_pbar(async_result, num_tasks, chunksize, refresh_time, pbar_wrapper):
                 remaining_now = async_result._number_left * chunksize
                 done_now = remaining - remaining_now
                 remaining = remaining_now
-            except:
+            except AttributeError:
+                # _number_left is a private multiprocessing attribute that
+                # may not be present on all AsyncResult-like objects.
                 break
             if done_now > 0:
                 pbar.update(done_now)
@@ -150,7 +152,10 @@ def _get_default_chunksize(chunksize, pool, num_tasks):
     # default from multiprocessing
     # https://github.com/python/cpython/blob/master/Lib/multiprocessing/pool.py
     if chunksize is None:
-        chunksize, extra = divmod(num_tasks, len(pool._pool) * 4)
+        num_workers = len(pool._pool)
+        if num_workers == 0:
+            return 1
+        chunksize, extra = divmod(num_tasks, num_workers * 4)
         if extra:
             chunksize += 1
     return chunksize
@@ -165,7 +170,7 @@ def _prepare_pbar_wrapper(progress):
     elif isinstance(progress, dict) and HAVE_TQDM:
         has_pbar = True
         wrapper = partial(tqdm.tqdm, **progress)
-    elif isinstance(progress, T.Callable):
+    elif callable(progress):
         has_pbar = True
         wrapper = progress
     return (has_pbar, wrapper)
@@ -409,10 +414,15 @@ class _ParallelAsyncResult(AsyncResult):
         return self._result._number_left
 
     def get(self, timeout=None):
-        values = self._result.get(timeout)
-        if self.ready():
-            self.join()
-        return values
+        try:
+            return self._result.get(timeout)
+        finally:
+            # Only join if the underlying result is actually done: a
+            # TimeoutError means the task is still running, and joining
+            # would block until it finishes instead of letting the
+            # caller retry get() later.
+            if self._result.ready():
+                self.join()
 
     def wait(self, timeout=None):
         return self._result.wait(timeout)
@@ -538,40 +548,3 @@ def starmap_async(function, iterables, *args, **kwargs):
     :type pm_processes: int
     """
     return _map_or_starmap_async(function, iterables, args, kwargs, "starmap")
-
-
-# Needs testing, but it might work as it is:
-
-# def _serial_imap_or_istarmap(function, iterable, args,
-#                              kwargs, map_or_starmap):
-#    if map_or_starmap == "map":
-#        output = (function(*([item] + list(args)), **kwargs)
-#                  for item in iterable)
-#    elif map_or_starmap == "starmap":
-#        output = (function(*(list(item) + list(args)), **kwargs)
-#                  for item in iterable)
-#    else:
-#        raise AssertionError("Internal parmap error: " +
-#                             "Invalid map_or_starmap. This should not happen")
-#    return output
-
-
-# def imap(function, iterable, *args, **kwargs):
-#    chunksize = kwargs.pop("pm_chunksize", 1)
-#    parallel, pool, close_pool = _create_pool(kwargs)
-#    # Map:
-#    if parallel:
-#        func_star = _get_helper_func("map")
-#        try:
-#            output = pool.imap(func_star,
-#                               zip(repeat(function), iterable,
-#                                   repeat(list(args)), repeat(kwargs)),
-#                               chunksize)
-#        finally:
-#            if close_pool:
-#                pool.close()
-#                pool.join()
-#    else:
-#        output = _serial_imap_or_istarmap(function, iterable, args, kwargs,
-#                                          map_or_starmap)
-#    return output

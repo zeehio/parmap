@@ -1,6 +1,21 @@
 parmap (1.7.0.9000)
 
-  * No changes yet
+  [Bug fixes]
+
+  * Stop silently swallowing all exceptions (including KeyboardInterrupt) in
+    the progress bar polling loop; only AttributeError is caught now.
+  * Avoid a ZeroDivisionError in the default chunksize calculation when the
+    pool has no workers.
+  * Ensure the pool is joined for cleanup even when an async result's get()
+    raises the worker's exception, instead of only on the happy path.
+
+  [Maintenance]
+
+  * Replace `isinstance(x, typing.Callable)` with `callable(x)`.
+  * Remove long-dead commented-out draft of an `imap`/`istarmap` API.
+  * Fix stale variable names in `_func_star_many`'s docstring.
+  * Document the Windows/macOS "spawn" `if __name__ == "__main__":` guard
+    requirement in the README.
 
  -- Sergio Oller <sergioller@gmail.com>  Sat, 09 Sep 2023 20:05:00 +0200
 
