@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13']
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -24,12 +24,12 @@ jobs:
     - name: Test with tox
       run: tox
     - name: Upload coverage.xml
-      if: ${{ matrix.python-version == '3.11' }}
+      if: ${{ matrix.python-version == '3.13' }}
       uses: actions/upload-artifact@v3
       with:
         name: tox-gh-actions-coverage
         path: coverage.xml
         if-no-files-found: error
     - name: Upload coverage.xml to codecov
-      if: ${{ matrix.python-version == '3.11' }}
+      if: ${{ matrix.python-version == '3.13' }}
       uses: codecov/codecov-action@v3

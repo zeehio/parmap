@@ -16,6 +16,8 @@ parmap (1.7.0.9000)
   * Fix stale variable names in `_func_star_many`'s docstring.
   * Document the Windows/macOS "spawn" `if __name__ == "__main__":` guard
     requirement in the README.
+  * Test and add support for Python 3.12 and 3.13 (CI matrix, tox envlist
+    and classifiers).
 
  -- Sergio Oller <sergioller@gmail.com>  Sat, 09 Sep 2023 20:05:00 +0200
 
