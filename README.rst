@@ -43,6 +43,16 @@ Installation:
 Usage:
 ------
 
+.. note::
+  ``parmap`` uses ``multiprocessing.Pool`` under the hood. On Windows (and on
+  macOS with the default "spawn" start method), any script that calls
+  ``parmap.map``/``parmap.starmap`` at import time must guard that code with
+  ``if __name__ == "__main__":``, otherwise each worker process will try to
+  re-import and re-run the script, causing a ``RuntimeError`` or runaway
+  process spawning. See the `multiprocessing programming guidelines
+  <https://docs.python.org/3/library/multiprocessing.html#the-spawn-and-forkserver-start-methods>`__
+  for details.
+
 Here are some examples with some unparallelized code parallelized with
 parmap:
 

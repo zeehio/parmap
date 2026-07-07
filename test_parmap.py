@@ -26,6 +26,13 @@ def _identity(*x):
     return x
 
 
+def _boom(x):
+    """Dummy function that raises for one specific input"""
+    if x == 2:
+        raise ValueError("boom")
+    return x
+
+
 _DEFAULT_B = 1
 
 
@@ -182,6 +189,63 @@ class TestParmap(unittest.TestCase):
             warnings.simplefilter("always")
             parmap.map(range, [1, 2], pm_processes=-3)
             self.assertTrue(len(w) > 0)
+
+    def test_map_worker_exception_propagates(self):
+        with self.assertRaises(ValueError):
+            parmap.map(_boom, range(4), pm_parallel=True)
+        with self.assertRaises(ValueError):
+            parmap.map(_boom, range(4), pm_parallel=False)
+
+    def test_map_async_cleans_up_pool_on_worker_error(self):
+        with parmap.map_async(_boom, range(4), pm_processes=2) as result:
+            with self.assertRaises(ValueError):
+                result.get()
+            # The pool must be joined for cleanup even though get() raised.
+            self.assertIsNone(result._pool)
+
+    def test_do_pbar_does_not_swallow_unexpected_errors(self):
+        from parmap.parmap import _do_pbar
+
+        class _NullPbar:
+            def __init__(self, total=None):
+                pass
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *exc_info):
+                return False
+
+            def update(self, n=1):
+                pass
+
+        class _FakeAsyncResult:
+            def ready(self):
+                return False
+
+            @property
+            def _number_left(self):
+                raise RuntimeError("unexpected failure, not an AttributeError")
+
+            def wait(self, timeout=None):
+                pass
+
+        with self.assertRaises(RuntimeError):
+            _do_pbar(
+                _FakeAsyncResult(),
+                num_tasks=1,
+                chunksize=1,
+                refresh_time=0,
+                pbar_wrapper=_NullPbar,
+            )
+
+    def test_get_default_chunksize_zero_workers(self):
+        from parmap.parmap import _get_default_chunksize
+
+        class _FakePool:
+            _pool = []
+
+        self.assertEqual(_get_default_chunksize(None, _FakePool(), 10), 1)
 
 
 if __name__ == "__main__":
