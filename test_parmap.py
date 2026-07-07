@@ -5,32 +5,22 @@ import warnings
 
 import parmap
 
-# The fact that parallelization is happening is controlled via timing
-# assertions. To keep them from being flaky on slower or more loaded CI
-# runners, the overhead margin is calibrated against this machine (see
-# _measure_pool_overhead below) instead of using a constant tuned for one
-# developer's machine.
+# The fact that parallelization is happening is controlled via reasonable
+# guesses of the parmap overhead and the CPU speeds.
+#
+# An earlier version of this file computed TIME_OVERHEAD by creating a real
+# multiprocessing.Pool as a module-level side effect (i.e. on every import,
+# before any test ran) to calibrate it against the running machine. That
+# hung indefinitely in CI even though it worked in every environment tested
+# locally, so it was reverted in favor of a generous static constant.
 
 
 def _identity(*x):
     return x
 
 
-def _measure_pool_overhead():
-    """Measure this machine's overhead for creating a small pool and
-    dispatching a call through it, to scale timing safety margins to the
-    speed/load of whatever machine is running the tests.
-    """
-    start = time.time()
-    with multiprocessing.Pool(processes=2) as pool:
-        pool.map(_identity, range(2))
-    return time.time() - start
-
-
 # Overhead of map_async / pool creation, should be less than TIME_PER_TEST.
-# Floor of 0.4s keeps this unchanged on fast machines; the multiplier gives
-# a generous margin on slow/contended ones.
-TIME_OVERHEAD = max(0.4, 5 * _measure_pool_overhead())
+TIME_OVERHEAD = 2.0
 
 # The time each call takes to return in the _wait test
 TIME_PER_TEST = 0.8
