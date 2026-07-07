@@ -193,6 +193,11 @@ functions you write, because of parmap backwards compatibility reasons. The list
 of conflicting arguments is: ``parallel``, ``chunksize``, ``pool``,
 ``processes``, ``callback``, ``error_callback`` and ``parmap_progress``.
 
+If your function's own signature declares a parameter with one of these
+reserved names and you pass a value for it, ``parmap`` will emit a
+``UserWarning`` pointing out the collision: it will still consume the value
+for itself, and your function will not receive it.
+
 
 
 Acknowledgments:

@@ -1,5 +1,13 @@
 parmap (1.7.0.9000)
 
+  [Enhancement]
+
+  * Warn (UserWarning) when a mapped function's own signature declares a
+    parameter name that collides with one of parmap's reserved keyword
+    arguments (`pm_*` and their deprecated aliases): parmap always consumes
+    those for itself, so the function silently never received the caller's
+    intended value. This was previously only documented, not enforced.
+
   [Bug fixes]
 
   * Stop silently swallowing all exceptions (including KeyboardInterrupt) in
@@ -18,6 +26,18 @@ parmap (1.7.0.9000)
     requirement in the README.
   * Test and add support for Python 3.12 and 3.13 (CI matrix, tox envlist
     and classifiers).
+  * Increase the test suite's timing safety margins to reduce flakiness on
+    slower or more loaded CI runners. (A first attempt at this calibrated
+    the margin by creating a real multiprocessing.Pool as a module-level
+    side effect at import time; that hung indefinitely in CI, so it was
+    reverted in favor of a plain, generous constant.)
+  * Update GitHub Actions used in CI to their latest major versions
+    (checkout, setup-python, upload-artifact, codecov-action).
+  * Drop tox/tox-gh-actions from CI in favor of plain pip install + pytest
+    (and mypy/coverage on the latest Python version) steps: the Actions
+    matrix already provides one job per Python version, so tox's own
+    per-version env selection was redundant, and collapsing it into a
+    single opaque `tox` step made a CI hang much harder to diagnose.
 
  -- Sergio Oller <sergioller@gmail.com>  Sat, 09 Sep 2023 20:05:00 +0200
 

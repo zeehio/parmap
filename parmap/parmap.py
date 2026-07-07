@@ -68,6 +68,7 @@ Members
 # The original idea for this implementation was given by J.F. Sebastian
 # at  http://stackoverflow.com/a/5443941/446149
 
+import inspect
 import multiprocessing
 import typing as T
 import warnings
@@ -238,11 +239,69 @@ def _deprecated_kwargs(kwargs, arg_newarg):
     return kwargs
 
 
+# Keyword arguments reserved by parmap for its own use. If the mapped
+# function's own signature declares a parameter with one of these names,
+# parmap will consume the caller's value for itself and the function will
+# never see it (see _warn_reserved_kwarg_collisions).
+_RESERVED_KWARGS_MAP = (
+    "pm_parallel",
+    "pm_chunksize",
+    "pm_pool",
+    "pm_processes",
+    "pm_pbar",
+    "parallel",
+    "chunksize",
+    "pool",
+    "processes",
+    "parmap_progress",
+)
+_RESERVED_KWARGS_ASYNC = (
+    "pm_parallel",
+    "pm_chunksize",
+    "pm_pool",
+    "pm_processes",
+    "pm_callback",
+    "pm_error_callback",
+    "parallel",
+    "chunksize",
+    "pool",
+    "processes",
+    "callback",
+    "error_callback",
+)
+
+
+def _warn_reserved_kwarg_collisions(function, kwargs, reserved_names):
+    """Warn if `function`'s own signature declares a parameter name that
+    the caller also passed as one of parmap's reserved keyword arguments.
+    parmap always consumes those itself, so `function` will not receive
+    the value the caller most likely intended for it.
+    """
+    try:
+        parameters = inspect.signature(function).parameters
+    except (TypeError, ValueError):
+        # function does not support introspection (e.g. some builtins);
+        # nothing we can check.
+        return
+    colliding = [name for name in reserved_names if name in kwargs and name in parameters]
+    if colliding:
+        warnings.warn(
+            "The argument(s) '{}' are reserved for parmap and will not be "
+            "passed to {!r}, even though its signature declares a "
+            "parameter with that name. Rename the parameter in your "
+            "function, or the keyword argument in your call, to avoid "
+            "this collision.".format(", ".join(colliding), function),
+            UserWarning,
+            stacklevel=4,
+        )
+
+
 def _map_or_starmap(function, iterable, args, kwargs, map_or_starmap):
     """
     Shared function between parmap.map and parmap.starmap.
     Refer to those functions for details.
     """
+    _warn_reserved_kwarg_collisions(function, kwargs, _RESERVED_KWARGS_MAP)
     arg_newarg = (
         ("parallel", "pm_parallel"),
         ("chunksize", "pm_chunksize"),
@@ -458,6 +517,7 @@ def _map_or_starmap_async(function, iterable, args, kwargs, map_or_starmap):
     Shared function between parmap.map_async and parmap.starmap_async.
     Refer to those functions for details.
     """
+    _warn_reserved_kwarg_collisions(function, kwargs, _RESERVED_KWARGS_ASYNC)
     arg_newarg = (
         ("parallel", "pm_parallel"),
         ("chunksize", "pm_chunksize"),
